@@ -1,0 +1,41 @@
+#!/bin/bash
+set -e
+
+prefix="/ci"
+mkdir -p "$prefix"
+
+echo -n "$(date '+%F %T') Started " > $prefix/progress.txt
+
+# Install software prerequisites
+echo -n "$(date '+%F %T') apt-get.. " >> $prefix/progress.txt
+sudo apt-get install -q -y git
+echo "ok"             >> $prefix/progress.txt
+
+# Install and run devstack
+echo -n "$(date '+%F %T') devstack.. " >> $prefix/progress.txt
+cd $HOME
+git clone https://github.com/openstack-dev/devstack.git
+cd devstack
+cp $prefix/local.conf .
+./stack.sh
+echo "ok" >> $prefix/progress.txt
+
+# Install and run tempest                                                                                                             
+echo -n "$(date '+%F %T') tempest.. " >> $prefix/progress.txt
+#cd $HOME
+#git clone git://git.openstack.org/openstack/tempest.git
+#cd tempest
+#sudo python ./setup.py install
+cd /opt/stack/tempest
+testr init
+testr run tempest.api.network.test_networks | tee $prefix/tempest.log
+echo "$(date '+%F %T') Finished" >> $prefix/progress.txt
+
+# That's it                                                                                                                           
+if grep PASSED $prefix/tempest.log; then
+    echo "passed" >> $prefix/progress.txt
+    exit 0
+else
+    echo "failed" >> $prefix/progress.txt
+    exit 1
+fi
