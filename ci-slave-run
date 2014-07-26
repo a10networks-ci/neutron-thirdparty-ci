@@ -1,0 +1,39 @@
+#!/bin/bash -xe
+
+if [ -z $ZUUL_PROJECT ]; then
+    export ZUUL_PROJECT=openstack-dev/sandbox
+fi
+if [ -z $ZUUL_BRANCH ]; then
+    export ZUUL_BRANCH=master
+fi
+export PYTHONUNBUFFERED=true
+export DEVSTACK_GATE_TIMEOUT=180
+export DEVSTACK_GATE_TEMPEST=1
+export DEVSTACK_GATE_NEUTRON=1
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])((network)|(neutron))'
+export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)'
+#export DEVSTACK_GATE_SMOKE_SERIAL=0
+#export DEVSTACK_GATE_TEMPEST_SCENARIO=0
+#export DEVSTACK_GATE_NETWORK_API=1
+#export DEVSTACK_GATE_TEMPEST_API=0
+#export ENABLED_SERVICES=g-api,g-reg,key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-cauth,rabbit,tempest,mysql,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas,q-fwaas,q-vpn
+
+pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
+if [ -n "$pids" ]; then
+  sudo kill $pids
+fi
+sudo service openvswitch-switch restart
+for db in $(mysqldump -uroot -psecretmysql --all-databases | grep '^CREATE DATABASE' | awk '{print $7}' | grep -v mysql); do echo "DROP DATABASE ${db};"; done | mysql -uroot -psecretmysql
+
+sudo rm -fr /opt/stack/logs.old
+if [ -d /opt/stack/logs ]; then
+  sudo mv /opt/stack/logs /opt/stack/logs.old
+fi
+sudo service rabbitmq-server restart
+cat devstack-gate/features.yaml | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' > /tmp/features.yml
+export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
+
+export RE_EXEC=true
+cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+bash ./safe-devstack-vm-gate-wrap.sh
+exit $?

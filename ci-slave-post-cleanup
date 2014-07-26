@@ -1,0 +1,14 @@
+#!/bin/bash -x
+
+(cd /opt/stack/new/devstack && sudo su stack -c ./unstack.sh)
+pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
+if [ -n "$pids" ]; then
+  sudo kill $pids
+fi
+sudo service openvswitch-switch restart
+
+for db in $(mysqldump -uroot -psecretmysql --all-databases | grep '^CREATE DATABASE' | awk '{print $7}' | grep -v mysql); do
+  echo "DROP DATABASE ${db};"
+done | mysql -uroot -psecretmysql
+
+exit 0
