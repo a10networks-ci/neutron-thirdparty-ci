@@ -2,14 +2,15 @@
 
 find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     cd $a
-    p=$(bash -c '. ../injectedEnvVars.txt; echo "logs/${JOB_NAME}/${BUILD_NUMBER}"')
+    job_and_num=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/${BUILD_NUMBER}"')
+    p="logs/$job_and_num"
 
     d="/ci/$p"
     if [ -d "$d" ]; then
         continue
     fi
     mkdir -p "$d"
-    cp ../log "$d/console_log.txt"
+    curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
 
     cd "$d"
