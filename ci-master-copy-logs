@@ -9,7 +9,7 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
         continue
     fi
     mkdir -p "$d"
-    cp ../log > "$d/console_log.txt"
+    cp ../log "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
 
     cd "$d"
