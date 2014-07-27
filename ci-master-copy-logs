@@ -4,12 +4,17 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     cd $a
     p=$(bash -c '. ../injectedEnvVars.txt; echo "logs/${JOB_NAME}/${BUILD_NUMBER}"')
 
-    if [ -d "/s3/$p" ]; then
+    d="/ci/$p"
+    if [ -d "$d" ]; then
         continue
     fi
-    mkdir -p "/s3/$p"
-    gzip -c ../log > "/s3/$p/console_log.txt.gz"
-    tar cf - logs | tar xf - -C "/s3/$p"
+    mkdir -p "$d"
+    cp ../log > "$d/console_log.txt"
+    tar cf - logs | tar xf - -C "$d"
+
+    cd "$d"
+    gunzip -r .
+    cd - >/dev/null 2>&1
 done
 
 exit 0
