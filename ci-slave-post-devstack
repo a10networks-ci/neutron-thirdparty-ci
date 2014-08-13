@@ -25,12 +25,12 @@ if [ ! -d $d ]; then
   cd $HOME || exit 1
   if [ ! -d neutron-tmp ]; then
     git clone https://github.com/dougwig/neutron.git neutron-tmp
+    cd neutron-tmp || exit 1
     git checkout -b bp/a10networks-lbaas-driver
     git pull origin bp/a10networks-lbaas-driver
-    cd neutron-tmp || exit 1
   else
     cd neutron-tmp || exit 1
-    git pull
+    git pull origin bp/a10networks-lbaas-driver
   fi
 
   drivers=neutron/services/loadbalancer/drivers
