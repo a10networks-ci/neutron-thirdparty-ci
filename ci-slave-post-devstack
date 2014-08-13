@@ -33,8 +33,8 @@ if [ ! -d $d ]; then
     git pull origin bp/a10networks-lbaas-driver
   fi
 
-  #base=/opt/stack/new/neutron
-  base=/usr/local/lib/python2.7/dist-packages
+  base=/opt/stack/new/neutron
+  #base=/usr/local/lib/python2.7/dist-packages
   drivers=neutron/services/loadbalancer/drivers
   units=neutron/tests/unit/services/loadbalancer/drivers
 
