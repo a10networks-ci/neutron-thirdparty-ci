@@ -20,10 +20,10 @@ export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnl
 
 $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-cleanup
 
-# cat devstack-gate/features.yaml \
-#   | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-#   > /tmp/features.yml
-# export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
+cat devstack-gate/features.yaml \
+  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+  > /tmp/features.yml
+export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 # # Modify the gate script to do some custom setup
 # f=devstack-gate/devstack-vm-gate.sh
