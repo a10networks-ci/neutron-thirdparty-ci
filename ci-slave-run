@@ -54,8 +54,8 @@ sed '/\.\/stack.sh.*$/ a\
   ' $f.new > $f.new2
 cp -f $f.new2 $f
 
-
 export RE_EXEC=true
-cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+sudo cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+sudo chmod a+rw ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
 exit $?
