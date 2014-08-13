@@ -48,10 +48,10 @@ export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 f=devstack-gate/devstack-vm-gate.sh
 cp -f $f $f.copy
 sed '/\.\/stack.sh.*$/ i\
-  neutron-thirdparty-ci/ci-slave-pre-devstack
+  $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
   ' $f > $f.new
 sed '/\.\/stack.sh.*$/ a\
-  neutron-thirdparty-ci/ci-slave-post-devstack
+  $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
   ' $f.new > $f.new2
 sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
 sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
