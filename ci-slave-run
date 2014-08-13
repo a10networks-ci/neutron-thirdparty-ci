@@ -52,7 +52,7 @@ sed '/\.\/stack.sh.*$/ a\
   neutron-thirdparty-ci/ci-slave-post-devstack
   ' $f.new > $f.new2
 sudo cp -f $f.new2 /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
-sudo chown a+rwx /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
+sudo chmod a+rwx /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
 
 export RE_EXEC=true
 cat - > ./safe-devstack-vm-gate-wrap.sh <<EOF
