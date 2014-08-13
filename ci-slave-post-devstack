@@ -22,12 +22,14 @@ sudo cp $WORKSPACE/neutron-thirdparty-ci/config.py $d/
 d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
 
 if [ ! -d $d ]; then
-  cd $HOME
+  cd $HOME || exit 1
   if [ ! -d neutron-tmp ]; then
-    git clone https://github.com/dougwig/neutron/tree/bp/a10networks-lbaas-driver neutron-tmp
-    cd neutron-tmp
+    git clone https://github.com/dougwig/neutron.git neutron-tmp
+    git checkout -b bp/a10networks-lbaas-driver
+    git pull origin bp/a10networks-lbaas-driver
+    cd neutron-tmp || exit 1
   else
-    cd neutron-tmp
+    cd neutron-tmp || exit 1
     git pull
   fi
 
@@ -37,7 +39,7 @@ if [ ! -d $d ]; then
   sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
   sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
 
-  cd /opt/stack/neutron
+  cd /opt/stack/new/neutron || exit 1
   sudo python setup.py install
 fi
 
