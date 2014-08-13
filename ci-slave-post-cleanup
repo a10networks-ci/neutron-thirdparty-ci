@@ -1,5 +1,9 @@
 #!/bin/bash -x
 
+pwd
+ls -l
+ls -l devstack-gate
+
 cd /home/jenkins/workspaces/workspace/a10-neutron-tempest
 cp -f devstack-gate/devstack-vm-gate.sh.copy devstack-gate/devstack-vm-gate.sh
 
