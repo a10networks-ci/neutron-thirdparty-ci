@@ -43,7 +43,9 @@ export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 # Modify the gate script to do some custom setup
 f=devstack-gate/devstack-vm-gate.sh
-cp -f $f $f.copy
+sudo cp -f $f $f.copy
+sudo touch $f.new $f.new2
+sudo chmod a+rw $f $f.new $f.new2
 sed '/\.\/stack.sh.*$/ i\
   neutron-thirdparty-ci/ci-slave-pre-devstack
   ' $f > $f.new
