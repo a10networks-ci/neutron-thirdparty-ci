@@ -1,6 +1,7 @@
-neutron-thirdparty-ci
-=====================
+A10 Networks Third-Party CI
+===========================
 
-Jenkins script for 3rd party CI testing
-
-- Forked from the excellent: https://github.com/SnabbCo/shellci
+- Contact email: a10-openstack-ci at a10networks dot com
+- Contact IRC: dougwig
+- Recheck with "recheck a10"
+- CI scripts: https://github.com/dougwig/neutron-thirdparty-ci

@@ -25,7 +25,4 @@ if [ ! -d $d ]; then
 
   sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
   sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
-
-  cd /opt/stack/neutron
-  sudo python setup.py install
 fi
