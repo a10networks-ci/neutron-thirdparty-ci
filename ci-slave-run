@@ -55,14 +55,10 @@ sudo cp -f $f.new2 /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
 sudo chmod a+rwx /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
 
 export RE_EXEC=true
-cat - > ./safe-devstack-vm-gate-wrap.sh <<EOF
-#!/bin/bash
 
-function gate_hook {
-    remaining_time
-    timeout -s 9 ${REMAINING_TIME}m $BASE/new/devstack-gate/devstack-vm-gate-thirdparty.sh
-}
-EOF
-cat devstack-gate/devstack-vm-gate-wrap.sh >> ./safe-devstack-vm-gate-wrap.sh
+sed \
+  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/new\/devstack-gate\/devstack-vm-gate-thirdparty.sh/' \
+  devstack-gate/devstack-vm-gate-wrap.sh \
+  > ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
 exit $?
