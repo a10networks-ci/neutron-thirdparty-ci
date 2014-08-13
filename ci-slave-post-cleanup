@@ -1,10 +1,20 @@
 #!/bin/bash -x
 
+cp -f devstack-gate/devstack-vm-gate.sh.copy devstack-gate/devstack-vm-gate.sh
+
 (cd /opt/stack/new/devstack && sudo su stack -c ./unstack.sh)
 pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
 if [ -n "$pids" ]; then
   sudo kill $pids
 fi
+
+cd /opt/stack/new/neutron
+n=$(git status | grep -c a10networks)
+if [ $n -gt 0 ]; then
+  sudo rm -fr neutron/services/loadbalancer/drivers/a10networks
+  sudo rm -fr neutron/tests/units/services/loadbalancer/drivers/a10networks
+fi
+
 sudo service openvswitch-switch restart
 
 for db in $(mysqldump -uroot -psecretmysql --all-databases | grep '^CREATE DATABASE' | awk '{print $7}' | grep -v mysql); do

@@ -33,6 +33,18 @@ sudo service rabbitmq-server restart
 cat devstack-gate/features.yaml | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' > /tmp/features.yml
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
+# Modify the gate script to do some custom setup
+f=devstack-gate/devstack-vm-gate.sh
+cp -f $f $f.copy
+sed '/\.\/stack.sh.*$/ i\
+  neutron-thirdparty-ci/ci-slave-pre-devstack
+  ' $f > $f.new
+sed '/\.\/stack.sh.*$/ a\
+  neutron-thirdparty-ci/ci-slave-post-devstack
+  ' $f.new > $f.new2
+cp -f $f.new2 $f
+
+
 export RE_EXEC=true
 cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
