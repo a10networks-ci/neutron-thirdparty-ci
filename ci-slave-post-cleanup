@@ -1,12 +1,5 @@
 #!/bin/bash -x
 
-pwd
-ls -l
-ls -l devstack-gate
-
-cd /home/jenkins/workspaces/workspace/a10-neutron-tempest
-cp -f devstack-gate/devstack-vm-gate.sh.copy devstack-gate/devstack-vm-gate.sh
-
 (cd /opt/stack/new/devstack && sudo su stack -c ./unstack.sh)
 pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
 if [ -n "$pids" ]; then
