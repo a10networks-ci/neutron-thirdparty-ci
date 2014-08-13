@@ -26,29 +26,20 @@ cat devstack-gate/features.yaml \
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 # # Modify the gate script to do some custom setup
-# f=devstack-gate/devstack-vm-gate.sh
-# cp -f $f $f.copy
-# sed '/\.\/stack.sh.*$/ i\
-#   $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
-#   ' $f > $f.new
-# sed '/\.\/stack.sh.*$/ a\
-#   $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
-#   ' $f.new > $f.new2
-# sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
-# sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
+f=devstack-gate/devstack-vm-gate.sh
+cp -f $f $f.copy
+sed '/\.\/stack.sh.*$/ i\
+  $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
+  ' $f > $f.new
+sed '/\.\/stack.sh.*$/ a\
+  $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
+  ' $f.new > $f.new2
+sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
+sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
 
 function pre_test_hook {
-#   f=/opt/stack/new/devstack/local.conf
-#   sudo touch $f
-#   sudo chmod a+rw $f
-#   cat - >> $f <<EOF
-# [[post-config|$NEUTRON_CONF]]
-# [DEFAULT]
-# service_plugins = neutron.services.l3_router.l3_router_plugin.L3RouterPlugin,neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin
-# [service_providers]
-# service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.driver_v1.ThunderDriver:default
-# EOF
   cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+  cp $WORKSPACE/neutron-thirdparty-ci/localrc /opt/stack/new/devstack/localrc
 }
 export -f pre_test_hook
 
@@ -59,10 +50,10 @@ export -f pre_test_hook
 
 export RE_EXEC=true
 
-# sed \
-#   -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
-#   devstack-gate/devstack-vm-gate-wrap.sh \
-#   > ./safe-devstack-vm-gate-wrap.sh
-cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+sed \
+  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
+  devstack-gate/devstack-vm-gate-wrap.sh \
+  > ./safe-devstack-vm-gate-wrap.sh
+#cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
 exit $?
