@@ -29,6 +29,14 @@ sudo rm -fr /opt/stack/logs.old
 if [ -d /opt/stack/logs ]; then
   sudo mv /opt/stack/logs /opt/stack/logs.old
 fi
+
+cd /opt/stack/new
+sudo rm -f devstacklog.txt*
+sudo rm -fr screen-logs.old
+if [ -d screen-logs ]; then
+  sudo mv screen-logs screen-logs.old
+fi
+
 sudo service rabbitmq-server restart
 cat devstack-gate/features.yaml | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' > /tmp/features.yml
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
