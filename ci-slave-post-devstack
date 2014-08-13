@@ -48,8 +48,8 @@ fi
 ps auxwww | grep neutron-server
 
 sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
+sudo chmod a+rwx /opt/stack/new/screen-logs/screen-q-svc.log
 sudo /usr/local/bin/neutron-server \
   --config-file /etc/neutron/neutron.conf \
   --config-file /etc/neutron/plugins/ml2/ml2_conf.ini \
   > /opt/stack/new/screen-logs/screen-q-svc.log 2>&1 &
-  
