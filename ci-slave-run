@@ -39,7 +39,9 @@ fi
 cd -
 
 sudo service rabbitmq-server restart
-cat devstack-gate/features.yaml | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' > /tmp/features.yml
+cat devstack-gate/features.yaml \
+  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+  > /tmp/features.yml
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 # Modify the gate script to do some custom setup
@@ -51,13 +53,13 @@ sed '/\.\/stack.sh.*$/ i\
 sed '/\.\/stack.sh.*$/ a\
   neutron-thirdparty-ci/ci-slave-post-devstack
   ' $f.new > $f.new2
-sudo cp -f $f.new2 /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
-sudo chmod a+rwx /opt/stack/new/devstack-gate/devstack-vm-gate-thirdparty.sh
+sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
+sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
 
 export RE_EXEC=true
 
 sed \
-  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/new\/devstack-gate\/devstack-vm-gate-thirdparty.sh/' \
+  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
   devstack-gate/devstack-vm-gate-wrap.sh \
   > ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
