@@ -33,14 +33,16 @@ if [ ! -d $d ]; then
     git pull origin bp/a10networks-lbaas-driver
   fi
 
+  #base=/opt/stack/new/neutron
+  base=/usr/local/lib/python2.7/dist-packages
   drivers=neutron/services/loadbalancer/drivers
   units=neutron/tests/unit/services/loadbalancer/drivers
 
-  sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
-  sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
+  sudo cp -r $drivers/a10networks $base/$drivers
+  sudo cp -r $units/a10networks $base/$units
 
-  cd /opt/stack/new/neutron || exit 1
-  sudo python setup.py install
+  # cd /opt/stack/new/neutron || exit 1
+  # sudo python setup.py install
 fi
 
 # # Restart neutron
