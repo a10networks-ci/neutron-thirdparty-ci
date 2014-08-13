@@ -1,5 +1,7 @@
 #!/bin/bash -x
 
+echo "Third-party post-devstack hook"
+
 # Enable driver in neutron.conf
 
 cd /etc/neutron
