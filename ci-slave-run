@@ -18,49 +18,51 @@ export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnl
 #export DEVSTACK_GATE_TEMPEST_API=0
 #export ENABLED_SERVICES=g-api,g-reg,key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-cauth,rabbit,tempest,mysql,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas,q-fwaas,q-vpn
 
-pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
-if [ -n "$pids" ]; then
-  sudo kill $pids
-fi
-sudo service openvswitch-switch restart
-for db in $(mysqldump -uroot -psecretmysql --all-databases | grep '^CREATE DATABASE' | awk '{print $7}' | grep -v mysql); do echo "DROP DATABASE ${db};"; done | mysql -uroot -psecretmysql
+$WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-cleanup
 
-sudo rm -fr /opt/stack/logs.old
-if [ -d /opt/stack/logs ]; then
-  sudo mv /opt/stack/logs /opt/stack/logs.old
-fi
+# cat devstack-gate/features.yaml \
+#   | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+#   > /tmp/features.yml
+# export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
-cd /opt/stack/new
-sudo rm -f devstacklog.txt*
-sudo rm -fr screen-logs.old
-if [ -d screen-logs ]; then
-  sudo mv screen-logs screen-logs.old
-fi
-cd -
+# # Modify the gate script to do some custom setup
+# f=devstack-gate/devstack-vm-gate.sh
+# cp -f $f $f.copy
+# sed '/\.\/stack.sh.*$/ i\
+#   $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
+#   ' $f > $f.new
+# sed '/\.\/stack.sh.*$/ a\
+#   $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
+#   ' $f.new > $f.new2
+# sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
+# sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
 
-sudo service rabbitmq-server restart
-cat devstack-gate/features.yaml \
-  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-  > /tmp/features.yml
-export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
+function pre_test_hook {
+#   f=/opt/stack/new/devstack/local.conf
+#   sudo touch $f
+#   sudo chmod a+rw $f
+#   cat - >> $f <<EOF
+# [[post-config|$NEUTRON_CONF]]
+# [DEFAULT]
+# service_plugins = neutron.services.l3_router.l3_router_plugin.L3RouterPlugin,neutron.services.loadbalancer.plugin.LoadBalancerPlugin,neutron.services.metering.metering_plugin.MeteringPlugin
+# [service_providers]
+# service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.driver_v1.ThunderDriver:default
+# EOF
+  cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+}
+export -f pre_test_hook
 
-# Modify the gate script to do some custom setup
-f=devstack-gate/devstack-vm-gate.sh
-cp -f $f $f.copy
-sed '/\.\/stack.sh.*$/ i\
-  $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
-  ' $f > $f.new
-sed '/\.\/stack.sh.*$/ a\
-  $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
-  ' $f.new > $f.new2
-sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
-sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
+# function gate_hook {
+#   exit 1
+# }
+# export -f gate_hook
 
 export RE_EXEC=true
 
-sed \
-  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
-  devstack-gate/devstack-vm-gate-wrap.sh \
-  > ./safe-devstack-vm-gate-wrap.sh
+# sed \
+#   -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
+#   devstack-gate/devstack-vm-gate-wrap.sh \
+#   > ./safe-devstack-vm-gate-wrap.sh
+cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
 exit $?

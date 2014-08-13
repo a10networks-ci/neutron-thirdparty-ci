@@ -2,7 +2,7 @@
 
 echo "Third-party pre-devstack hook"
 
-sudo pip install -U acos-client
-sudo pip install -U a10-neutron-lbaas
+# sudo pip install -U acos-client
+# sudo pip install -U a10-neutron-lbaas
 
 exit 0

@@ -1,0 +1,20 @@
+#!/bin/bash -x
+
+$WORKSPACE/neutron-thirdparty-ci/ci-slave-cleanup
+
+sudo rm -fr /opt/stack/logs.old
+if [ -d /opt/stack/logs ]; then
+  sudo mv /opt/stack/logs /opt/stack/logs.old
+fi
+
+cd /opt/stack/new
+sudo rm -f devstacklog.txt*
+sudo rm -fr screen-logs.old
+if [ -d screen-logs ]; then
+  sudo mv screen-logs screen-logs.old
+fi
+cd -
+
+sudo service rabbitmq-server restart
+
+exit 0

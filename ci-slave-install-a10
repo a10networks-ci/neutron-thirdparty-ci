@@ -1,0 +1,31 @@
+#!/bin/bash -x
+
+sudo pip install -U acos-client
+sudo pip install -U a10-neutron-lbaas
+
+d=/etc/neutron/services/loadbalancer/a10networks
+
+sudo mkdir -p $d
+sudo cp $WORKSPACE/neutron-thirdparty-ci/config.py $d
+
+d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
+
+if [ ! -d $d ]; then
+  cd $HOME
+  if [ ! -d neutron-tmp ]; then
+    git clone https://github.com/dougwig/neutron/tree/bp/a10networks-lbaas-driver neutron-tmp
+    cd neutron-tmp
+  else
+    cd neutron-tmp
+    git pull
+  fi
+
+  drivers=neutron/services/loadbalancer/drivers
+  units=neutron/tests/unit/services/loadbalancer/drivers
+
+  sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
+  sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
+
+  cd /opt/stack/neutron
+  sudo python setup.py install
+fi

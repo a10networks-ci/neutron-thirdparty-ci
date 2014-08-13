@@ -4,64 +4,64 @@ echo "Third-party post-devstack hook"
 
 # Enable driver in neutron.conf
 
-cd /etc/neutron
-f=neutron.conf
-sudo cp $f $f.dist
-sudo chmod a+rw $f
-cat $f.dist | egrep -v '^service_provider=LOADBALANCER' > $f
-echo "service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.drive
-r_v1.ThunderDriver:default" >> $f
+# cd /etc/neutron
+# f=neutron.conf
+# sudo cp $f $f.dist
+# sudo chmod a+rw $f
+# cat $f.dist | egrep -v '^service_provider=LOADBALANCER' > $f
+# echo "service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.drive
+# r_v1.ThunderDriver:default" >> $f
 
 # Make sure we have a configuration
 
-d=/etc/neutron/services/loadbalancer/a10networks
-sudo mkdir -p $d
-cd $d
+# d=/etc/neutron/services/loadbalancer/a10networks
+# sudo mkdir -p $d
+# cd $d
 
-if [ ! -f config.py ]; then
-  sudo touch $d/config.py
-  sudo chmod a+rw $d/config.py  
-  cat - > $d/config.py <<EOF
+# if [ ! -f config.py ]; then
+#   sudo touch $d/config.py
+#   sudo chmod a+rw $d/config.py  
+#   cat - > $d/config.py <<EOF
 
-import os
+# import os
 
-devices = {
-    "ax-lsi": {
-        "host": "10.0.0.160",
-        "username": "admin",
-        "password": os.environ['AX_PASSWORD'],
-        "port": 8443,
-        "api_version": "2.1",
-    },
-}
+# devices = {
+#     "ax-lsi": {
+#         "host": "10.0.0.160",
+#         "username": "admin",
+#         "password": os.environ['AX_PASSWORD'],
+#         "port": 8443,
+#         "api_version": "2.1",
+#     },
+# }
 
-EOF
+# EOF
 
 # Make sure we have a driver (only relevant pre-merge)
 
-d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
+# d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
 
-if [ ! -d $d ]; then
-  cd $HOME
-  if [ ! -d neutron-tmp ]; then
-    git clone https://github.com/dougwig/neutron/tree/bp/a10networks-lbaas-driver neutron-tmp
-    cd neutron-tmp
-  else
-    cd neutron-tmp
-    git pull
-  fi
+# if [ ! -d $d ]; then
+#   cd $HOME
+#   if [ ! -d neutron-tmp ]; then
+#     git clone https://github.com/dougwig/neutron/tree/bp/a10networks-lbaas-driver neutron-tmp
+#     cd neutron-tmp
+#   else
+#     cd neutron-tmp
+#     git pull
+#   fi
 
-  drivers=neutron/services/loadbalancer/drivers
-  units=neutron/tests/unit/services/loadbalancer/drivers
+#   drivers=neutron/services/loadbalancer/drivers
+#   units=neutron/tests/unit/services/loadbalancer/drivers
 
-  sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
-  sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
+#   sudo cp -r $drivers/a10networks /opt/stack/new/neutron/$drivers
+#   sudo cp -r $units/a10networks /opt/stack/new/neutron/$units
 
-  cd /opt/stack/neutron
-  sudo python setup.py install
-fi
+#   cd /opt/stack/neutron
+#   sudo python setup.py install
+# fi
 
-# Restart neutron
+# # Restart neutron
 
-sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
-sudo /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
+# sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
+# sudo /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
