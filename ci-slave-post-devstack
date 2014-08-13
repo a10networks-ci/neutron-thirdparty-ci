@@ -9,33 +9,13 @@ f=neutron.conf
 sudo cp $f $f.dist
 sudo chmod a+rw $f
 cat $f.dist | egrep -v '^service_provider=LOADBALANCER' > $f
-echo "service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.drive
-r_v1.ThunderDriver:default" >> $f
+echo "service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.drivers.a10networks.driver_v1.ThunderDriver:default" >> $f
 
 # Make sure we have a configuration
 
 d=/etc/neutron/services/loadbalancer/a10networks
 sudo mkdir -p $d
-cd $d
-
-if [ ! -f config.py ]; then
-  sudo touch $d/config.py
-  sudo chmod a+rw $d/config.py  
-  cat - > $d/config.py <<EOF
-
-import os
-
-devices = {
-    "ax-lsi": {
-        "host": "10.0.0.160",
-        "username": "admin",
-        "password": os.environ['AX_PASSWORD'],
-        "port": 8443,
-        "api_version": "2.1",
-    },
-}
-
-EOF
+sudo cp $WORKSPACE/neutron-thirdparty-ci/config.py $d/
 
 # Make sure we have a driver (only relevant pre-merge)
 
@@ -66,4 +46,6 @@ fi
 ps auxwww | grep neutron-server
 
 sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
-sudo /usr/local/bin/neutron-server --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
+sudo /usr/local/bin/neutron-server \
+  --config-file /etc/neutron/neutron.conf \
+  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini
