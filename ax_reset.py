@@ -2,6 +2,7 @@
 
 import subprocess
 import tempfile
+import time
 
 import config
 
@@ -39,7 +40,9 @@ class AxSSH(object):
                      'exit\r\n',
                      'y\r\n']
 
+        print commands
         lines = self._ssh(commands)
+        print lines
         trim = []
         for line in lines:
             x = line.strip()
@@ -53,13 +56,28 @@ class AxSSH(object):
 
     def erase(self):
         commands = [
-            'erase preserve-management preserve-accounts\r\n',
+            'config\r\n',
+            'erase preserve-management preserve-accounts reload\r\n',
             'y\r\n',
+            '\r\n',
+            #'web-service server\r\n',
+            #'web-service port 8080\r\n',
+            #'web-service secure-server\r\n',
+            #'web-service secure-port 8443\r\n',
+            #'write mem\r\n',
+            'end\r\n',
+        ]
+        self.config_gets(commands)
+
+    def enable_web(self):
+        commands = [
+            'config\r\n',
             'web-service server\r\n',
             'web-service port 8080\r\n',
             'web-service secure-server\r\n',
             'web-service secure-port 8443\r\n',
             'write mem\r\n',
+            'end\r\n',
         ]
         self.config_gets(commands)
 
@@ -70,4 +88,9 @@ class AxSSH(object):
 c = config.devices['ax-lsi']
 ax = AxSSH(c['host'], 'jenkins', 'nopass')
 ax.erase()
+time.sleep(30)
+
+c = config.devices['ax-lsi']
+ax = AxSSH(c['host'], 'jenkins', 'nopass')
+ax.enable_web()
 print(ax.show_run())
