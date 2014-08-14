@@ -1,0 +1,6 @@
+#!/bin/bash -x
+
+sudo apt-get -y install sshpass
+
+cd $WORKSPACE/neutron-thirdparty-ci || exit 1
+python ax_reset.py

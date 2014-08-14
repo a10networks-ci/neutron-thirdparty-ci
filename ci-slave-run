@@ -19,6 +19,7 @@ export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnl
 #export ENABLED_SERVICES=g-api,g-reg,key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-cauth,rabbit,tempest,mysql,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas,q-fwaas,q-vpn
 
 $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-cleanup
+$WORKSPACE/neutron-thirdparty-ci/ci-slave-reset-a10
 
 cat devstack-gate/features.yaml \
   | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
