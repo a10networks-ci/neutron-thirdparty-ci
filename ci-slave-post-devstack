@@ -43,6 +43,7 @@ if [ ! -d $d ]; then
 
   # cd /opt/stack/new/neutron || exit 1
   # sudo python setup.py install
+  sudo pip install --build=/tmp/pip-build.bE71P -e /opt/stack/neutron
 fi
 
 # # Restart neutron
