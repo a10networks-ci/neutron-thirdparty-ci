@@ -14,8 +14,7 @@ class AxSSH(object):
 
     def _ssh(self, commands):
         t = tempfile.TemporaryFile()
-        ssh = subprocess.Popen(['sshpass', '-p', self.password,
-                                'ssh', "%s@%s" % (self.user, self.host)],
+        ssh = subprocess.Popen(['ssh', "%s@%s" % (self.user, self.host)],
                                close_fds=True,
                                shell=False,
                                stdin=subprocess.PIPE,
@@ -56,6 +55,11 @@ class AxSSH(object):
         commands = [
             'erase preserve-management preserve-accounts\r\n',
             'y\r\n',
+            'web-service server\r\n',
+            'web-service port 8080\r\n',
+            'web-service secure-server\r\n',
+            'web-service secure-port 8443\r\n',
+            'write mem\r\n',
         ]
         self.config_gets(commands)
 
@@ -64,6 +68,6 @@ class AxSSH(object):
 
 
 c = config.devices['ax-lsi']
-ax = AxSSH(c['host'], c['username'], c['password'])
+ax = AxSSH(c['host'], 'jenkins', 'nopass')
 ax.erase()
-print ax.show_run()
+print(ax.show_run())
