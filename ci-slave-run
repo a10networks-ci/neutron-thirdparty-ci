@@ -1,7 +1,7 @@
 #!/bin/bash -xe
 
 if [ -z $ZUUL_PROJECT ]; then
-    export ZUUL_PROJECT=openstack-dev/sandbox
+    export ZUUL_PROJECT=openstack/neutron
 fi
 if [ -z $ZUUL_BRANCH ]; then
     export ZUUL_BRANCH=master
