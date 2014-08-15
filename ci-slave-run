@@ -38,7 +38,9 @@ sed '/\.\/stack.sh.*$/ i\
 sed '/\.\/stack.sh.*$/ a\
   $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
   ' $f.new > $f.new2
-sudo cp -f $f.new2 /opt/stack/devstack-vm-gate-thirdparty.sh
+sed -e 's/^DEFAULT_CONCURRENCY=.*$/DEFAULT_CONCURRENCY=1/' \
+  $f.new2 > $f.new3
+sudo cp -f $f.new3 /opt/stack/devstack-vm-gate-thirdparty.sh
 sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
 
 function pre_test_hook {
