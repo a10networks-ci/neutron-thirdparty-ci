@@ -15,7 +15,7 @@ echo "service_provider = LOADBALANCER:A10Networks:neutron.services.loadbalancer.
 
 d=/etc/neutron/services/loadbalancer/a10networks
 sudo mkdir -p $d
-sudo cp $WORKSPACE/neutron-thirdparty-ci/config.py $d/
+sudo cp $HOME/config.py $d/
 
 # Make sure we have a driver (only relevant pre-merge)
 

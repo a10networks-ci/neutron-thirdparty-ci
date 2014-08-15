@@ -1,9 +1,9 @@
 
 devices = {
     "ax-lsi": {
-        "host": "10.0.0.160",
+        "host": "AXHOST",
         "username": "admin",
-        "password": "ooQk3VoDVz8GabDQZeugMQYq",
+        "password": "AXPASSWORD",
         "port": 8443,
         "api_version": "2.1",
     },
