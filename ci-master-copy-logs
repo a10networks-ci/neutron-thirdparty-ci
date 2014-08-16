@@ -2,6 +2,10 @@
 
 find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     cd $a
+    if [ ! -d logs ]; then
+        continue
+    fi
+
     job_and_num=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/${BUILD_NUMBER}"')
     p="logs/$job_and_num"
 

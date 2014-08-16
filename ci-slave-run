@@ -6,6 +6,7 @@ fi
 if [ -z $ZUUL_BRANCH ]; then
     export ZUUL_BRANCH=master
 fi
+export ZUUL_URL=http://zuul.a10cloud.com/p
 export PYTHONUNBUFFERED=true
 export DEVSTACK_GATE_TIMEOUT=180
 export DEVSTACK_GATE_TEMPEST=1
