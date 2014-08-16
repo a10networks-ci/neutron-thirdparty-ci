@@ -13,6 +13,10 @@ sudo rm -fr screen-logs.old
 if [ -d screen-logs ]; then
   sudo mv screen-logs screen-logs.old
 fi
+sudo rm -fr neutron.old
+if [ -d neutron ]; then
+  sudo mv neutron neutron.old
+fi
 cd -
 
 sudo service rabbitmq-server restart
