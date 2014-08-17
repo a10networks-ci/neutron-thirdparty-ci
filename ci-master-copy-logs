@@ -7,11 +7,11 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     fi
 
     job_and_num=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/${BUILD_NUMBER}"')
+    echo $job_with_gerrit
+    job_with_gerrit=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/$ZUUL_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/${BUILD_NUMBER}"')
+    echo $job_with_gerrit
+
     p="logs/$job_and_num"
-
-    job_dir_test=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/$ZUUL_PROJECT/$ZUUL_CHANGE/$ZUUL_PATCHSET/${BUILD_NUMBER}"')
-    echo $job_dir_test
-
     d="/ci/$p"
     if [ -d "$d" ]; then
         continue
@@ -20,11 +20,19 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
 
+    # Some browsers don't download gz seamlessly, and some folks don't like that.
     cd "$d"
     gunzip -r .
-    cd - >/dev/null 2>&1
 
+    # Some CI info; who to call if it's broke.
     cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"
+
+    # In prep to switch to URLs that match gerrit, ish, start making them as links now.
+    x="logs/$job_with_gerrit"
+    b=$(dirname "/ci/$x")
+    mkdir -p $b
+    cd $b
+    ln -s "$d" .
 done
 
 exit 0
