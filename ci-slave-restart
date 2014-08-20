@@ -1,0 +1,8 @@
+#!/bin/sh
+
+n=$(perl -e 'print int(rand(100)) . "\n";')
+if [ $n -lt 10 ]; then
+  sudo reboot
+fi
+
+exit 0
