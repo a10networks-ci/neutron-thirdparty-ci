@@ -1,0 +1,8 @@
+#!/bin/sh -x
+
+if [ -z "$1" ]; then
+	echo "error: `basename $0` <gerrit-num> <gerrit-patchset>"
+	exit 1
+fi
+
+zuul enqueue --trigger gerrit --pipeline check --project openstack/neutron --change ${1},${2}

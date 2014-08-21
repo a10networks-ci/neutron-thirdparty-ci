@@ -1,0 +1,43 @@
+includes:
+  - python-file: openstack_functions.py
+
+pipelines:
+  - name: check
+    description: Newly uploaded patchsets enter this pipeline to receive an initial +/-1 Verified vote from Jenkins.
+    #failure-message: Build failed.  For information on how to proceed, see https://wiki.openstack.org/wiki/GerritJenkinsGit#Test_Failures
+
+    footer-message: "Contact: a10-openstack-ci@a10networks.com\n\nAdditional information: https://wiki.openstack.org/wiki/ThirdPartySystems/A10_Networks_CI"
+
+    manager: IndependentPipelineManager
+    precedence: low
+    trigger:
+      gerrit:
+        - event: patchset-created
+        - event: change-restored
+        - event: comment-added
+          comment: recheck a10
+        - event: comment-added
+          comment: recheck-a10
+        - event: comment-added
+          comment: recheck no bug
+        - event: comment-added
+          comment: recheck bug
+
+    success:
+      gerrit:
+        verified: 0
+#        verified: 1
+    failure:
+      gerrit:
+        verified: 0
+#        verified: -1
+
+jobs:
+  - name: a10-neutron-tempest
+    branch: master
+#    voting: false
+
+projects:
+  - name: openstack/neutron
+    check:
+      - a10-neutron-tempest
