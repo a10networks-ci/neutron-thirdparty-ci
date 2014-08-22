@@ -88,7 +88,7 @@ class AxSSH(object):
 c = config.devices['ax-lsi']
 ax = AxSSH(c['host'], 'jenkins', 'nopass')
 ax.erase()
-time.sleep(30)
+time.sleep(60)
 
 c = config.devices['ax-lsi']
 ax = AxSSH(c['host'], 'jenkins', 'nopass')
