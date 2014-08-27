@@ -17,8 +17,10 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
         continue
     fi
     mkdir -p "$d"
-    curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
+    #curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
+    cp ../log "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
+    sudo chmod a+r "$d"
 
     # Some browsers don't download gz seamlessly, and some folks don't like that.
     cd "$d"
