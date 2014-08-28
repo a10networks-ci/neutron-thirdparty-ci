@@ -18,7 +18,8 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     fi
     mkdir -p "$d"
     #curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
-    cp ../log "$d/console_log.txt"
+    #cp ../log "$d/console_log.txt"
+    $WORKSPACE/neutron-thirdparty-ci/strip_jenkins_log.rb ../log > "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
     chmod a+r "$d"
 
