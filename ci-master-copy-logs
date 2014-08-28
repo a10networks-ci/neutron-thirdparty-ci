@@ -20,12 +20,13 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     #curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
     #cp ../log "$d/console_log.txt"
     $WORKSPACE/neutron-thirdparty-ci/strip_jenkins_log.rb ../log > "$d/console_log.txt"
+    gzip "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
     chmod a+r "$d"
 
     # Some browsers don't download gz seamlessly, and some folks don't like that.
     cd "$d"
-    gunzip -r .
+    #gunzip -r .
 
     # Some CI info; who to call if it's broke.
     cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"
