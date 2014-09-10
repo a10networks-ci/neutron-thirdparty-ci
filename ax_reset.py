@@ -81,16 +81,25 @@ class AxSSH(object):
         ]
         self.config_gets(commands)
 
+    def reboot(self):
+        commands = [
+            'reboot\r\n',
+            'yes\r\n',
+            'yes\r\n'
+        ]
+        self.config_gets(commands)
+
     def show_run(self):
         return self.config_gets(['show run\r\n'])
 
 
-c = config.devices['ax-lsi']
-ax = AxSSH(c['host'], 'jenkins', 'nopass')
-ax.erase()
-time.sleep(60)
+if __name__ == "__main__":
+    c = config.devices['ax-lsi']
+    ax = AxSSH(c['host'], 'admin', 'nopass')
+    ax.erase()
+    time.sleep(60)
 
-c = config.devices['ax-lsi']
-ax = AxSSH(c['host'], 'jenkins', 'nopass')
-ax.enable_web()
-print(ax.show_run())
+    c = config.devices['ax-lsi']
+    ax = AxSSH(c['host'], 'admin', 'nopass')
+    ax.enable_web()
+    print(ax.show_run())
