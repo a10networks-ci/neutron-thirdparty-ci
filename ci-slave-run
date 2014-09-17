@@ -43,7 +43,7 @@ sed '/\.\/stack.sh.*$/ a\
   $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
   ' $f.new > $f.new2
 sed -e 's/^DEFAULT_CONCURRENCY=.*$/DEFAULT_CONCURRENCY=1/' \
-    -e "s/^TOP_DIR=.*/TOP_DIR=$WORKSPACE\/devstack-gate/" \
+    -e "s@^TOP_DIR=.*@TOP_DIR=$WORKSPACE/devstack-gate@" \
   $f.new2 > $f.new3
 sudo cp -f $f.new3 /opt/stack/devstack-vm-gate-thirdparty.sh
 sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
