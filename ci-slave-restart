@@ -5,6 +5,12 @@
 #  sudo reboot
 #fi
 
+cd $WORKSPACE/neutron-thirdparty-ci || exit 1
+cp -f ax_*.py $HOME
+cd $HOME || exit 1
+python ax_reboot.py
+sleep 10
+
 sudo reboot
 sleep 60  # we shouldn't ever make it here
 
