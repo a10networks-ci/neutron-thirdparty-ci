@@ -49,6 +49,7 @@ sed -e 's/^DEFAULT_CONCURRENCY=.*$/DEFAULT_CONCURRENCY=1/' \
   $f.new2 > $f.new3
 sudo cp -f $f.new3 /opt/stack/devstack-vm-gate-thirdparty.sh
 sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
+sudo touch /opt/stack/functions.sh
 
 function pre_test_hook {
   cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
