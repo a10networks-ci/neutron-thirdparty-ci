@@ -22,7 +22,8 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     $WORKSPACE/neutron-thirdparty-ci/strip_jenkins_log.rb ../log > "$d/console_log.txt"
     gzip "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
-    chmod a+r "$d"
+    gzip -q -r "$d/logs"
+    chmod -R a+r "$d"
 
     # Some browsers don't download gz seamlessly, and some folks don't like that.
     cd "$d"
