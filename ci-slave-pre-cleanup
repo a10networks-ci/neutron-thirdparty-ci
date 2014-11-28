@@ -19,6 +19,14 @@ if [ -d neutron ]; then
 fi
 cd -
 
+cd /var/log
+sudo rm -fr apache2.old
+sudo mv apache2 apache2.old
+sudo mkdir apache2
+sudo chown root.adm apache2
+sudo chmod 750 apache2
+cd -
+
 sudo service rabbitmq-server restart
 
 exit 0
