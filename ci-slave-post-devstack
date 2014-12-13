@@ -4,12 +4,12 @@ echo "Third-party post-devstack hook"
 
 # Enable driver in neutron.conf
 
-cd /etc/neutron
-f=neutron.conf
-sudo cp $f $f.dist
-sudo chmod a+rw $f
-cat $f.dist | egrep -v '^service_provider=LOADBALANCER' > $f
-echo "service_provider = LOADBALANCER:A10Networks:neutron_lbaas.services.loadbalancer.drivers.a10networks.driver_v1.ThunderDriver:default" >> $f
+#cd /etc/neutron
+#f=neutron.conf
+#sudo cp $f $f.dist
+#sudo chmod a+rw $f
+#cat $f.dist | egrep -v '^service_provider=LOADBALANCER' > $f
+#echo "service_provider = LOADBALANCER:A10Networks:neutron_lbaas.services.loadbalancer.drivers.a10networks.driver_v1.ThunderDriver:default" >> $f
 
 # Make sure we have a configuration
 
@@ -19,40 +19,40 @@ sudo cp $HOME/config.py $d/
 
 # Make sure we have a driver (only relevant pre-merge)
 
-d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
+#d=/opt/stack/new/neutron/neutron/services/loadbalancer/drivers/a10networks
 
-if [ ! -d $d ]; then
-  cd $HOME || exit 1
-  if [ ! -d neutron-tmp ]; then
-    git clone https://github.com/dougwig/neutron.git neutron-tmp
-    cd neutron-tmp || exit 1
-    git checkout -b bp/a10networks-lbaas-driver
-    git pull origin bp/a10networks-lbaas-driver
-  else
-    cd neutron-tmp || exit 1
-    git pull origin bp/a10networks-lbaas-driver
-  fi
+#if [ ! -d $d ]; then
+#  cd $HOME || exit 1
+#  if [ ! -d neutron-tmp ]; then
+#    git clone https://github.com/dougwig/neutron.git neutron-tmp
+#    cd neutron-tmp || exit 1
+#    git checkout -b bp/a10networks-lbaas-driver
+#    git pull origin bp/a10networks-lbaas-driver
+#  else
+#    cd neutron-tmp || exit 1
+#    git pull origin bp/a10networks-lbaas-driver
+#  fi
 
-  base=/opt/stack/new/neutron
+#  base=/opt/stack/new/neutron
   #base=/usr/local/lib/python2.7/dist-packages
-  drivers=neutron/services/loadbalancer/drivers
-  units=neutron/tests/unit/services/loadbalancer/drivers
+#  drivers=neutron/services/loadbalancer/drivers
+#  units=neutron/tests/unit/services/loadbalancer/drivers
 
-  sudo cp -r $drivers/a10networks $base/$drivers
-  sudo cp -r $units/a10networks $base/$units
+#  sudo cp -r $drivers/a10networks $base/$drivers
+#  sudo cp -r $units/a10networks $base/$units
 
   # cd /opt/stack/new/neutron || exit 1
   # sudo python setup.py install
-  sudo pip install --build=/tmp/pip-build.bE71P -e /opt/stack/new/neutron
-fi
+#  sudo pip install --build=/tmp/pip-build.bE71P -e /opt/stack/new/neutron
+#fi
 
 # # Restart neutron
 
-ps auxwww | grep neutron-server
+#ps auxwww | grep neutron-server
 
-sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
-sudo chmod a+rwx /opt/stack/new/screen-logs/screen-q-svc.log
-sudo /usr/local/bin/neutron-server \
-  --config-file /etc/neutron/neutron.conf \
-  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini \
-  > /opt/stack/new/screen-logs/screen-q-svc.log 2>&1 &
+#sudo kill -9 `ps aux | grep '[n]eutron-server' -m1 | awk '{print $2}'`
+#sudo chmod a+rwx /opt/stack/new/screen-logs/screen-q-svc.log
+#sudo /usr/local/bin/neutron-server \
+#  --config-file /etc/neutron/neutron.conf \
+#  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini \
+#  > /opt/stack/new/screen-logs/screen-q-svc.log 2>&1 &
