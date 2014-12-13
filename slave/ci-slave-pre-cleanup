@@ -10,6 +10,7 @@ fi
 cd /opt/stack/new
 sudo rm -f devstacklog.txt*
 sudo rm -fr screen-logs.old
+sudo rm -f worlddump*
 if [ -d screen-logs ]; then
   sudo mv screen-logs screen-logs.old
 fi
