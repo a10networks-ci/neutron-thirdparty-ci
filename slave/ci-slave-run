@@ -17,13 +17,7 @@ export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|t
 # temporarily disable scenario (expects same neutron subnet)
 #export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)(?!.*lbaas_agent)'
 
-export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
-
-#export DEVSTACK_GATE_SMOKE_SERIAL=0
-#export DEVSTACK_GATE_TEMPEST_SCENARIO=0
-#export DEVSTACK_GATE_NETWORK_API=1
-#export DEVSTACK_GATE_TEMPEST_API=0
-#export ENABLED_SERVICES=g-api,g-reg,key,n-api,n-crt,n-obj,n-cpu,n-cond,n-sch,n-cauth,rabbit,tempest,mysql,neutron,q-svc,q-agt,q-dhcp,q-l3,q-meta,q-lbaas,q-fwaas,q-vpn
+#export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
 
 echo "HOSTNAME `hostname`"
 
@@ -33,24 +27,9 @@ $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
 
 cat devstack-gate/features.yaml \
   | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+  | sed -e 's/juno\: \[default.*$/juno: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
   > /tmp/features.yml
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
-
-# # Modify the gate script to do some custom setup
-#f=devstack-gate/devstack-vm-gate.sh
-#cp -f $f $f.copy
-#sed '/\.\/stack.sh.*$/ i\
-#  $WORKSPACE/neutron-thirdparty-ci/ci-slave-pre-devstack
-#  ' $f > $f.new
-#sed '/\.\/stack.sh.*$/ a\
-#  $WORKSPACE/neutron-thirdparty-ci/ci-slave-post-devstack
-#  ' $f.new > $f.new2
-#sed -e 's/^DEFAULT_CONCURRENCY=.*$/DEFAULT_CONCURRENCY=1/' \
-#    -e "s@^TOP_DIR=.*@TOP_DIR=$WORKSPACE/devstack-gate@" \
-#  $f.new2 > $f.new3
-#sudo cp -f $f.new3 /opt/stack/devstack-vm-gate-thirdparty.sh
-#sudo chmod a+rwx /opt/stack/devstack-vm-gate-thirdparty.sh
-#sudo touch /opt/stack/functions.sh
 
 function pre_test_hook {
   cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
@@ -64,10 +43,6 @@ export -f pre_test_hook
 
 export RE_EXEC=true
 
-#sed \
-#  -e 's/new\/devstack\-gate\/devstack\-vm\-gate\.sh$/devstack-vm-gate-thirdparty.sh/' \
-#  devstack-gate/devstack-vm-gate-wrap.sh \
-#  > ./safe-devstack-vm-gate-wrap.sh
 cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 bash ./safe-devstack-vm-gate-wrap.sh
 exit $?
