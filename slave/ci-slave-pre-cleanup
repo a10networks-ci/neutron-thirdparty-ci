@@ -1,6 +1,6 @@
 #!/bin/bash -x
 
-$WORKSPACE/neutron-thirdparty-ci/ci-slave-cleanup
+$WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-cleanup
 
 sudo rm -fr /opt/stack/logs.old
 if [ -d /opt/stack/logs ]; then
