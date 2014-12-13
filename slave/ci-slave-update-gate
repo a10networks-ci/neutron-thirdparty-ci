@@ -19,6 +19,3 @@ else
     fi
     cd ..
 fi
-
-rm -fr neutron-thirdparty-ci
-git clone https://github.com/a10networks/neutron-thirdparty-ci

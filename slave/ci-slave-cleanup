@@ -1,0 +1,25 @@
+#!/bin/bash
+
+(cd /opt/stack/new/devstack && sudo su stack -c ./unstack.sh) >/dev/null 2>&1
+
+pids=$(ps auxwww | grep python | egrep -v 'fail2ban|grep' | awk '{print $2}')
+if [ -n "$pids" ]; then
+  sudo kill $pids
+fi
+
+set -x
+cd /opt/stack/new/neutron
+n=$(git status | grep -c a10networks)
+if [ $n -gt 0 ]; then
+  sudo rm -fr neutron/services/loadbalancer/drivers/a10networks
+  sudo rm -fr neutron/tests/units/services/loadbalancer/drivers/a10networks
+fi
+set +x
+
+sudo service openvswitch-switch restart
+
+for db in $(mysqldump -uroot -psecretmysql --all-databases | grep '^CREATE DATABASE' | awk '{print $7}' | grep -v mysql); do
+  echo "DROP DATABASE ${db};"
+done | mysql -uroot -psecretmysql
+
+exit 0

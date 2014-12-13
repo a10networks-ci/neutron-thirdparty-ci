@@ -1,0 +1,4 @@
+#!/bin/bash -x
+
+$WORKSPACE/neutron-thirdparty-ci/ci-slave-cleanup
+exit $?
