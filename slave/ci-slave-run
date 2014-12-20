@@ -32,9 +32,14 @@ cat devstack-gate/features.yaml \
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 function pre_test_hook {
-  cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+  $WORKSPACE/neutron-third-party-ci/slave/pre-test-hook
 }
 export -f pre_test_hook
+
+function post_test_hook {
+  $WORKSPACE/neutron-third-party-ci/slave/post-test-hook
+}
+export -f post_test_hook
 
 # function gate_hook {
 #   exit 1

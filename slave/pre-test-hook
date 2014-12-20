@@ -1,0 +1,32 @@
+#!/bin/bash -xe
+
+## Our devstack config
+
+cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+
+## Fix devstack for a bug in multi-line handling
+
+cd /opt/stack/new/devstack
+n=$(grep -c inidelete lib/config)
+if [ $n -eq 0 ]; then
+    cat - >/tmp/dfix.sh <<EOF
+git config user.name "Doug Wiegley"
+git config user.email "dougw@a10networks.com"
+git fetch https://review.openstack.org/openstack-dev/devstack \
+    refs/changes/73/141573/4 && git cherry-pick FETCH_HEAD
+EOF
+    sudo su stack -c 'sh -xe /tmp/dfix.sh'
+fi
+
+## A10 Software and config
+
+sudo pip install -U acos-client
+sudo pip install -U a10-neutron-lbaas
+
+# Make sure we have a configuration
+
+d=/etc/neutron/services/loadbalancer/a10networks
+sudo mkdir -p $d
+sudo cp $HOME/config.py $d/
+
+exit 0
