@@ -7,7 +7,9 @@ cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.con
 ## Fix devstack for a bug in multi-line handling
 
 cd /opt/stack/new/devstack
+set +e
 n=$(grep -c inidelete lib/config)
+set -e
 if [ $n -eq 0 ]; then
     cat - >/tmp/dfix.sh <<EOF
 git config user.name "Doug Wiegley"
