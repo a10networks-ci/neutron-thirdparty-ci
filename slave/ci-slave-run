@@ -23,7 +23,6 @@ echo "HOSTNAME `hostname`"
 
 $WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-pre-cleanup
 $WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-reset-a10
-$WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-pre-devstack
 
 cat devstack-gate/features.yaml \
   | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
