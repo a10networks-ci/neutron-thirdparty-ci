@@ -17,6 +17,7 @@ git config user.email "dougw@a10networks.com"
 git fetch https://review.openstack.org/openstack-dev/devstack \
     refs/changes/73/141573/4 && git cherry-pick FETCH_HEAD
 EOF
+    sudo chmod a+rw .git/config
     sudo su stack -c 'sh -xe /tmp/dfix.sh'
 fi
 
