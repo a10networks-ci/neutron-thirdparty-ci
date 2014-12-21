@@ -15,7 +15,7 @@ if [ $n -eq 0 ]; then
 sudo git config user.name "Doug Wiegley"
 sudo git config user.email "dougw@a10networks.com"
 sudo git fetch https://review.openstack.org/openstack-dev/devstack \
-    refs/changes/73/141573/4 && git cherry-pick FETCH_HEAD
+    refs/changes/73/141573/4 && sudo git cherry-pick FETCH_HEAD
 EOF
     sudo su stack -c 'sh -xe /tmp/dfix.sh'
 fi
