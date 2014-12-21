@@ -34,10 +34,17 @@ pipelines:
 
 jobs:
   - name: a10-neutron-tempest
-    branch: master
+    branch: (master|juno|lbaasv2)
+#    voting: false
+#  - name: a10-neutron-tempest-dev
+#    branch: master
 #    voting: false
 
 projects:
   - name: openstack/neutron
+    check:
+      - a10-neutron-tempest
+
+  - name: openstack/neutron-lbaas
     check:
       - a10-neutron-tempest
