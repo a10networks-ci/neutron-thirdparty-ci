@@ -87,7 +87,7 @@ class AxSSH(object):
             'show partition\r\n',
             'end\r\n',
         ]
-        z = self.config_gets(commands)
+        z = self.config_get(commands)
         print("Z = %s" % z)
         print("len = %d" % len(z))
         print("split = %s" % map(lambda x: x.split(), z))
