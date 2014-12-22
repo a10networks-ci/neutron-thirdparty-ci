@@ -121,6 +121,7 @@ class AxSSH(object):
 if __name__ == "__main__":
     c = config.devices['ax-lsi']
     ax = AxSSH(c['host'], 'jenkins', 'nopass')
-    for p in ax.partition_list():
+    z = ax.partition_list()
+    for p in z:
         ax.partition_delete(p)
     ax.write_mem()
