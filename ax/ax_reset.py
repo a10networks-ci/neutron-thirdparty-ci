@@ -88,6 +88,9 @@ class AxSSH(object):
             'end\r\n',
         ]
         z = self.config_gets(commands)
+        print("Z = %s" % z)
+        print("len = %d" % len(z))
+        print("split = %s" % map(lambda x: x.split(), z))
         return map(lambda x: x.split()[0], z[7:-2])
 
     def partition_delete(self, p):
