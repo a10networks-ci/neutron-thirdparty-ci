@@ -93,10 +93,17 @@ class AxSSH(object):
         print("split = %s" % map(lambda x: x.split(), z))
         return map(lambda x: x.split()[0], z[7:-2])
 
-    def partition_delete(self, p):
+    def partition_delete(self, partitions):
         commands = [
             'config\r\n',
-            "no partition %s\r\n" % p,
+        ]
+        for p in partitions:
+            commands += [
+                "no partition %s\r\n" % p,
+                'yes\r\n',
+            ]
+        commands += [
+            'write mem\r\n',
             'end\r\n',
         ]
         self.config_gets(commands)
@@ -125,6 +132,4 @@ if __name__ == "__main__":
     c = config.devices['ax-lsi']
     ax = AxSSH(c['host'], 'jenkins', 'nopass')
     z = ax.partition_list()
-    for p in z:
-        ax.partition_delete(p)
-    ax.write_mem()
+    ax.partition_delete(z)
