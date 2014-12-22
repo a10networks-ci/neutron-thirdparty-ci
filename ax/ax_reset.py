@@ -81,6 +81,31 @@ class AxSSH(object):
         ]
         self.config_gets(commands)
 
+    def partition_list(self):
+        commands = [
+            'config\r\n',
+            'show partition\r\n',
+            'end\r\n',
+        ]
+        z = self.config_gets(commands)
+        return map(lambda x: x.split()[0], z[7:-2])
+
+    def partition_delete(self, p):
+        commands = [
+            'config\r\n',
+            "no partition %s\r\n" % p,
+            'end\r\n',
+        ]
+        self.config_gets(commands)
+
+    def write_mem(self):
+        commands = [
+            'config\r\n',
+            'write mem\r\n',
+            'end\r\n',
+        ]
+        self.config_gets(commands)
+
     def reboot(self):
         commands = [
             'reboot\r\n',
@@ -96,10 +121,6 @@ class AxSSH(object):
 if __name__ == "__main__":
     c = config.devices['ax-lsi']
     ax = AxSSH(c['host'], 'admin', 'nopass')
-    ax.erase()
-    time.sleep(60)
-
-    c = config.devices['ax-lsi']
-    ax = AxSSH(c['host'], 'admin', 'nopass')
-    ax.enable_web()
-    print(ax.show_run())
+    for p in ax.partition_list():
+        ax.partition_delete(p)
+    ax.write_mem()
