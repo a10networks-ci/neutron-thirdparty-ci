@@ -1,9 +1,6 @@
 #!/bin/sh
 
-cd $WORKSPACE/neutron-thirdparty-ci || exit 1
-cp -f ax/ax_*.py $HOME
-cd $HOME || exit 1
-python ax_reboot.py
+python $WORKSPACE/neutron-thirdparty-ci/ax/ax_reboot.py
 sleep 10
 
 sudo reboot

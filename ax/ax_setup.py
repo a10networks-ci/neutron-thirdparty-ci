@@ -13,5 +13,7 @@ import config
 if __name__ == "__main__":
     c = config.devices['ax-lsi']
     ax = AxSSH(c['host'], c['user'], c['pass'])
-    z = ax.partition_list()
-    ax.partition_delete(z)
+
+    sn = open("%s/.license_sn" % os.environ['HOME']).read().strip()
+    id = open("%s/.a10-instance-id" % os.environ['HOME']).read().strip()
+    ax.license(sn, id)

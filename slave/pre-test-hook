@@ -27,8 +27,27 @@ sudo pip install -U a10-neutron-lbaas
 
 # Make sure we have a configuration
 
-d=/etc/neutron/services/loadbalancer/a10networks
-sudo mkdir -p $d
-sudo cp $HOME/config.py $d/
+if [ -z "$SINGLE_USE" ]; then
+    d=/etc/neutron/services/loadbalancer/a10networks
+    sudo mkdir -p $d
+    sudo cp $HOME/config.py $d/
+else
+    echo "Writing private config.py"
+    set +x
+    cat - > ~/config.py <<EOF
+devices = {
+    "ax-lsi": {
+        "host": "`cat ~/.a10-private-ip`",
+        "username": "admin",
+        "password": "`cat ~/.a10-instance-id`",
+        "port": 8443,
+        "api_version": "2.1",
+        "v_method": "adp",
+    },
+}
+EOF
+    set -x
+    python $WORKSPACE/neutron-thirdparty-ci/ax/ax_setup.py
+fi
 
 exit 0

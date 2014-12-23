@@ -1,0 +1,3 @@
+#!/bin/sh -x
+
+aws ec2 terminate-instances --instance-ids `cat ~/.a10-instance-id`

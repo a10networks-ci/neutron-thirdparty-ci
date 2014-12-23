@@ -2,7 +2,4 @@
 
 whoami
 
-cd $WORKSPACE/neutron-thirdparty-ci || exit 1
-cp -f ax/ax_reset.py $HOME
-cd $HOME || exit 1
-python ax_reset.py
+python $WORKSPACE/neutron-thirdparty-ci/ax/ax_reset.py
