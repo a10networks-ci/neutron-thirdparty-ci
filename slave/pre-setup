@@ -5,6 +5,8 @@ if [ -d /opt/stack ]; then
     exit 1
 fi
 
+addgroup jenkins
+
 sudo cp -r ~ubuntu/.aws ~
 sudo chown -R `whoami` ~/.aws
 sudo cp ~ubuntu/.license_sn ~
