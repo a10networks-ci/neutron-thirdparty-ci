@@ -1,4 +1,9 @@
-#!/bin/bash -x
+#!/bin/bash -xe
+
+if [ -d /opt/stack ]; then
+    echo "ERROR: attempt to re-use devstack node"
+    exit 1
+fi
 
 sudo apt-get install python python-pip
 sudo pip install awscli
