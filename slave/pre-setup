@@ -5,5 +5,10 @@ if [ -d /opt/stack ]; then
     exit 1
 fi
 
-sudo apt-get install -y python python-pip
-sudo pip install awscli
+sudo cp -r ~ubuntu/.aws ~
+sudo chown -R `whoami` ~/.aws
+sudo cp ~ubuntu/.license_sn ~
+sudo chown -R `whoami` ~/.license_sn
+
+sudo apt-get install -y python python-pip >/tmp/apt.out
+sudo pip install awscli >/tmp/pip.out
