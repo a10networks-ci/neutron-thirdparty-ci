@@ -1,5 +1,9 @@
 #!/bin/bash -xe
 
+ls -l /opt/stack
+ls -l /opt/stack/new
+ls -l /
+
 ## Our devstack config
 
 cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
