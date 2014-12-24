@@ -57,5 +57,10 @@ export -f post_test_hook
 export RE_EXEC=true
 
 cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+set +e
 bash ./safe-devstack-vm-gate-wrap.sh
-exit $?
+r=$?
+if [ $r -ne 0 ]; then
+  post_test_hook
+fi
+exit $r
