@@ -36,9 +36,11 @@ class AxSSH(object):
                      'exit\r\n',
                      'y\r\n']
 
-        print commands if verbose
+        if verbose:
+            print commands
         lines = self._ssh(commands)
-        print lines if verbose
+        if verbose:
+            print lines
         trim = []
         for line in lines:
             x = line.strip()
