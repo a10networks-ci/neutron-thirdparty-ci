@@ -27,6 +27,7 @@ if [ -z "$SINGLE_USE" ]; then
     $WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-reset-a10
 else
     # Start spinning up an appliance now; we'll check it in the pre-test-hook
+    $WORKSPACE/neutron-thirdparty-ci/slave/pre-setup
     $WORKSPACE/neutron-thirdparty-ci/slave/a10-run
 fi
 
