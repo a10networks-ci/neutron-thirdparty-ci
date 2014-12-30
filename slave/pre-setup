@@ -24,5 +24,5 @@ sudo pip install awscli
 
 sudo cp -r ~ubuntu/.aws ~
 sudo cp ~ubuntu/.license_sn ~
-sudo cp ~ubuntu/.ssh/id* ~/.ssh
+sudo cp ~ubuntu/.ssh/id_rsa ~ubuntu/.ssh/id_rsa.pub ~/.ssh
 sudo chown -R `whoami` ~/.aws ~/.license_sn ~/.ssh
