@@ -6,6 +6,8 @@ if [ -d /opt/stack ]; then
 fi
 
 sudo addgroup jenkins
+sudo adduser jenkins wheel
+sudo adduser stack wheel
 
 sudo cp -r ~ubuntu/.aws ~
 sudo chown -R `whoami` ~/.aws
