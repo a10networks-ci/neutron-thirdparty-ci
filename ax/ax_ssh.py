@@ -11,7 +11,8 @@ class AxSSH(object):
 
     def _ssh(self, commands):
         t = tempfile.TemporaryFile()
-        ssh = subprocess.Popen(['ssh', "%s@%s" % (self.user, self.host)],
+        ssh = subprocess.Popen(['ssh', '-o', 'StrictHostKeyChecking=no',
+                               "%s@%s" % (self.user, self.host)],
                                close_fds=True,
                                shell=False,
                                stdin=subprocess.PIPE,
