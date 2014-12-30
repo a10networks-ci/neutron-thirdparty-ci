@@ -12,5 +12,9 @@ sudo chown -R `whoami` ~/.aws
 sudo cp ~ubuntu/.license_sn ~
 sudo chown -R `whoami` ~/.license_sn
 
-sudo apt-get install -y python python-pip >/tmp/apt.out
-sudo pip install awscli >/tmp/pip.out
+sudo apt-get install -y python python-pip
+sudo pip install awscli
+
+cat /etc/passwd
+cat /etc/group
+sudo cat /etc/sudoers
