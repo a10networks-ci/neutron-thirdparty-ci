@@ -7,7 +7,17 @@ fi
 
 sudo addgroup jenkins
 sudo adduser jenkins wheel
-sudo adduser stack wheel
+
+t=/tmp/.sudoers.$$
+cat - > $t <<EOF
+root ALL = (ALL) ALL
+%wheel ALL = (ALL) NOPASSWD:ALL
+jenkins ALL = (ALL) NOPASSWD:ALL
+stack ALL = (ALL) NOPASSWD:ALL
+EOF
+sudo cp /etc/sudoers /etc/sudoers.dist
+sudo cp $t /etc/sudoers
+sudo chmod 440 /etc/sudoers
 
 sudo cp -r ~ubuntu/.aws ~
 sudo chown -R `whoami` ~/.aws
