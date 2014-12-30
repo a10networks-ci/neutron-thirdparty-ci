@@ -3,6 +3,7 @@
 ls -l /opt/stack
 ls -l /opt/stack/new
 ls -l /
+ls -l $HOME/.ssh
 
 ## Our devstack config
 
@@ -31,14 +32,10 @@ sudo pip install -U a10-neutron-lbaas
 
 # Make sure we have a configuration
 
-if [ -z "$SINGLE_USE" ]; then
-    d=/etc/neutron/services/loadbalancer/a10networks
-    sudo mkdir -p $d
-    sudo cp $HOME/config.py $d/
-else
+if [ -n "$SINGLE_USE" ]; then
     echo "Writing private config.py"
     set +x
-    cat - > ~/config.py <<EOF
+    cat - > $HOME/config.py <<EOF
 devices = {
     "ax-lsi": {
         "host": "`cat ~/.a10-private-ip`",
@@ -51,6 +48,13 @@ devices = {
 }
 EOF
     set -x
+fi
+
+d=/etc/neutron/services/loadbalancer/a10networks
+sudo mkdir -p $d
+sudo cp $HOME/config.py $d/
+
+if [ -n "$SINGLE_USE" ]; then
     python $WORKSPACE/neutron-thirdparty-ci/ax/ax_setup.py
 fi
 
