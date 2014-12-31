@@ -44,7 +44,11 @@ for i in $instances; do
         continue
     fi
 
-    ip=$(grep PublicIpAddress /tmp/z | head -1 | perl -ne '/"PublicIpAddress": "(.*?)",/ && print "$1\n";')
+    ip=$(grep PublicIpAddress $t | head -1 | perl -ne '/"PublicIpAddress": "(.*?)",/ && print "$1\n";')
+
+    if [ -z "$ip" ]; then
+        continue
+    fi
 
     # Check if the instance is a Jenkins slave
     if ! is_slave $ip; then
@@ -58,4 +62,5 @@ for i in $instances; do
     fi
 done
 
+rm -f $t
 exit 0
