@@ -23,11 +23,16 @@ fi
 # Is the given host a Jenkins slave?
 is_slave() {
     ip=$1
-    n=$(ssh -o StrictHostKeyChecking=no ubuntu@$ip ps auxww | grep slave | grep -v grep | wc -l)
+    ssh -o StrictHostKeyChecking=no ubuntu@$ip ps auxww > $t.2
+    if [ -z "$t.2" ]; then
+        # Empty means we got no results; something went wrong
+        return 0
+    fi
+    n=$(cat $t.2 | grep slave | grep -v grep | wc -l)
     if [ $n -eq 0 ]; then
-        false
+        return 1
     else
-        true
+        return 0
     fi
 }
 
@@ -62,5 +67,5 @@ for i in $instances; do
     fi
 done
 
-rm -f $t
+rm -f $t $t.2
 exit 0

@@ -1,1 +1,2 @@
-* * * * * root /home/builder/neutron-thirdparty-ci/bin/cleanup-ec2.sh
+CRON_RUN=1
+*/2 * * * * root /home/builder/neutron-thirdparty-ci/bin/cleanup-ec2.sh

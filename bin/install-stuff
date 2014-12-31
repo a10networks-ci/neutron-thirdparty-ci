@@ -8,10 +8,7 @@
 
 # Install cron.d files
 
-cd etc/cron.d
-for file in *; do
-    sudo cp $file /etc/cron.d
-done
-killall -HUP cron
+sudo cp etc/cron.d/* /etc/cron.d
+sudo service cron reload
 
 exit 0
