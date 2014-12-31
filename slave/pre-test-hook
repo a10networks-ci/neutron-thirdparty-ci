@@ -1,10 +1,5 @@
 #!/bin/bash -xe
 
-ls -l /opt/stack
-ls -l /opt/stack/new
-ls -l /
-ls -l $HOME/.ssh
-
 ## Our devstack config
 
 cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
@@ -52,7 +47,8 @@ fi
 
 d=/etc/neutron/services/loadbalancer/a10networks
 sudo mkdir -p $d
-sudo cp $HOME/config.py $d/
+sudo chmod -R a+rwx /etc/neutron
+cp $HOME/config.py $d/
 
 if [ -n "$SINGLE_USE" ]; then
     python $WORKSPACE/neutron-thirdparty-ci/ax/ax_setup.py
