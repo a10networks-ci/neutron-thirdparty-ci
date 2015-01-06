@@ -96,6 +96,16 @@ class AxSSH(object):
         ]
         self.config_gets(commands, verbose=False)
 
+    def set_admin_password(self, id):
+        commands = [
+            'config\r\n',
+            "admin admin password %s\r\n" % id,
+            'end\r\n',
+            'write mem\r\n',
+            'end\r\n',
+        ]
+        self.config_gets(commands, verbose=False)
+
     def partition_list(self):
         commands = [
             'config\r\n',

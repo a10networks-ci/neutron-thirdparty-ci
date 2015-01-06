@@ -17,3 +17,5 @@ if __name__ == "__main__":
     sn = open("%s/.license_sn" % os.environ['HOME']).read().strip()
     id = open("%s/.a10-instance-id" % os.environ['HOME']).read().strip()
     ax.license(sn, id)
+
+    ax.set_admin_password(id)
