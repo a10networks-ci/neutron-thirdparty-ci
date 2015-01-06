@@ -137,6 +137,8 @@ class ZuulWatcher
       if @consecutive_failures > 20
         pause_jobs
       end
+
+      STDOUT.flush
     end
   end
 end
