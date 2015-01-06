@@ -15,9 +15,22 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
         continue
     fi
 
-    job_and_num=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/${BUILD_NUMBER}"')
-    echo $job_with_gerrit
-    job_with_gerrit=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}/$ZUUL_CHANGE/$ZUUL_PATCHSET/${BUILD_NUMBER}"')
+    job=$(bash -c '. ../injectedEnvVars.txt; echo "${JOB_NAME}"')
+    echo $job
+    build_number=$(bash -c '. ../injectedEnvVars.txt; echo "${BUILD_NUMBER}"')
+    echo $build_number
+    gerrit=$(bash -c '. ../injectedEnvVars.txt; echo "$ZUUL_CHANGE/$ZUUL_PATCHSET"')
+    echo $gerrit
+
+    if [ "$job" = "a10-neutron-lbaas" ]; then
+        job="a10-neutron-lbaas-wrapper"
+    elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
+        job="a10-neutron-lbaas"
+    fi
+    echo $job
+    job_and_num="${job}/${build_number}"
+    echo $job_with_num
+    job_with_gerrit="${job}/${gerrit}/${build_number}"
     echo $job_with_gerrit
 
     p="logs/$job_with_gerrit"
