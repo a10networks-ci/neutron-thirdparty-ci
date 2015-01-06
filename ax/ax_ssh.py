@@ -83,7 +83,9 @@ class AxSSH(object):
     def license(self, sn, id):
         commands = [
             'config\r\n',
-            'license-manager host 54.201.247.34 port 443 use-mgmt-port\r\n',
+            'license-manager host 104.236.80.136 port 443 use-mgmt-port\r\n',
+            'license-manager host 54.213.147.205 port 443 use-mgmt-port\r\n',
+            'license-manager host 54.164.152.116 port 443 use-mgmt-port\r\n',
             "license-manager sn %s\r\n" % sn,
             'license-manager interval 3\r\n',
             "license-manager instance_name openstack-ci-%s\r\n" % id,
