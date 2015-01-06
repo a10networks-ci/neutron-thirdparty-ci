@@ -5,8 +5,8 @@ if [ -d /opt/stack ]; then
     exit 1
 fi
 
-sudo addgroup jenkins
-sudo adduser jenkins wheel
+# sudo addgroup jenkins
+# sudo adduser jenkins wheel
 
 t=/tmp/.sudoers.$$
 cat - > $t <<EOF
@@ -22,7 +22,7 @@ sudo chmod 440 /etc/sudoers
 sudo apt-get install -y python python-pip
 sudo pip install awscli
 
-sudo cp -r ~ubuntu/.aws ~
-sudo cp ~ubuntu/.license_sn ~
-sudo cp ~ubuntu/.ssh/id_rsa ~ubuntu/.ssh/id_rsa.pub ~/.ssh
-sudo chown -R `whoami` ~/.aws ~/.license_sn ~/.ssh
+# sudo cp -r ~ubuntu/.aws ~
+# sudo cp ~ubuntu/.license_sn ~
+# sudo cp ~ubuntu/.ssh/id_rsa ~ubuntu/.ssh/id_rsa.pub ~/.ssh
+# sudo chown -R `whoami` ~/.aws ~/.license_sn ~/.ssh

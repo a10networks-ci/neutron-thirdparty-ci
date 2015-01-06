@@ -14,7 +14,9 @@ elif [ -n "$CRON_RUN" ]; then
     # Cron environment setup foo
     export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
 
-    mv /tmp/cleanup-ec2.out /tmp/cleanup-ec2.out.old
+    if [ -f /tmp/cleanup-ec.out ]; then
+        mv /tmp/cleanup-ec2.out /tmp/cleanup-ec2.out.old
+    fi
     exec >/tmp/cleanup-ec2.out 2>&1
 
     set -x

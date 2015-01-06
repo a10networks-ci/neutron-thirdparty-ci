@@ -15,13 +15,11 @@ pipelines:
         - event: patchset-created
         - event: change-restored
         - event: comment-added
-          comment: recheck a10
+          comment: recheck
         - event: comment-added
           comment: recheck-a10
         - event: comment-added
-          comment: recheck no bug
-        - event: comment-added
-          comment: recheck bug
+          comment: redo-a10
 
 #    success:
 #      gerrit:
