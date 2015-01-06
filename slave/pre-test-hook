@@ -43,7 +43,6 @@ devices = {
 }
 EOF
     set -x
-    cat $HOME/config.py
 fi
 
 d=/etc/neutron/services/loadbalancer/a10networks
