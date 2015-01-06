@@ -89,6 +89,8 @@ class ZuulWatcher
     # watch_file('/var/log/zuul/zuul.log') do |line|
     watch_file('/var/log/zuul/debug.log') do |line|
 
+      puts "LINE #{line}"
+
       # trigger event: <TriggerEvent patchset-created openstack/neutron-specs master 128613,7
       if line =~ /trigger event: \<.*? .*? (.*?) (.*?) (.*),(.*)\>/
         project = $1
