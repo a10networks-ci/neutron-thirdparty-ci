@@ -16,6 +16,7 @@ jenkins ALL = (ALL) NOPASSWD:ALL
 stack ALL = (ALL) NOPASSWD:ALL
 EOF
 sudo cp /etc/sudoers /etc/sudoers.dist
+sudo chown root $t
 sudo chmod 440 $t
 sudo mv $t /etc/sudoers
 
