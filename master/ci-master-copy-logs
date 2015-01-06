@@ -1,5 +1,14 @@
 #!/bin/bash -xe
 
+if [ -z "$LOCKED" ]; then
+    # Only one of us gets to run at a time
+    (
+        flock 9 || exit 1
+        export LOCKED=1
+        exec $0 $*
+    ) 9>/tmp/copy-logs.lock
+fi
+
 find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     cd $a
     if [ ! -d logs ]; then
