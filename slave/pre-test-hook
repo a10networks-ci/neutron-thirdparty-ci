@@ -1,0 +1,57 @@
+#!/bin/bash -xe
+
+## Our devstack config
+
+cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+
+## Fix devstack for a bug in multi-line handling
+
+cd /opt/stack/new/devstack
+set +e
+n=$(grep -c inidelete lib/config)
+set -e
+if [ $n -eq 0 ]; then
+    cat - >/tmp/dfix.sh <<EOF
+sudo git config user.name "Doug Wiegley"
+sudo git config user.email "dougw@a10networks.com"
+sudo git fetch https://review.openstack.org/openstack-dev/devstack \
+    refs/changes/73/141573/4 && sudo git cherry-pick FETCH_HEAD
+EOF
+    sudo su stack -c 'sh -xe /tmp/dfix.sh'
+fi
+
+## A10 Software and config
+
+sudo pip install -U acos-client
+sudo pip install -U a10-neutron-lbaas
+
+# Make sure we have a configuration
+
+if [ -n "$SINGLE_USE" ]; then
+    echo "Writing private config.py"
+    set +x
+    cat - > $HOME/config.py <<EOF
+devices = {
+    "ax-lsi": {
+        "host": "`cat ~/.a10-private-ip`",
+        "username": "admin",
+        "password": "`cat ~/.a10-instance-id`",
+        "port": 8443,
+        "api_version": "2.1",
+        "v_method": "adp",
+    },
+}
+EOF
+    set -x
+fi
+
+d=/etc/neutron/services/loadbalancer/a10networks
+sudo mkdir -p $d
+sudo chmod -R a+rwx /etc/neutron
+cp $HOME/config.py $d/
+
+if [ -n "$SINGLE_USE" ]; then
+    python $WORKSPACE/neutron-thirdparty-ci/ax/ax_setup.py
+fi
+
+exit 0

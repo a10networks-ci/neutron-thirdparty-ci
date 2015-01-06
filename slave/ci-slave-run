@@ -1,0 +1,66 @@
+#!/bin/bash -xe
+
+if [ -z $ZUUL_PROJECT ]; then
+    export ZUUL_PROJECT=openstack/neutron
+fi
+if [ -z $ZUUL_BRANCH ]; then
+    export ZUUL_BRANCH=master
+fi
+export ZUUL_URL=http://zuul.a10cloud.com/p
+export PYTHONUNBUFFERED=true
+export DEVSTACK_GATE_TIMEOUT=180
+export DEVSTACK_GATE_TEMPEST=1
+export DEVSTACK_GATE_NEUTRON=1
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])((network)|(neutron))'
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*lbaas_agent)'
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|test_bulk_create_delete_subnet|test_create_delete_subnet_with|overlap|test_create_delete_subnet_all_attributes|test_update_subnet_gw_dns_host_routes_dhcp|test_create_list_subnet_with_no_gw64_one_network))'
+export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent))'
+# temporarily disable scenario (expects same neutron subnet)
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)(?!.*lbaas_agent)'
+
+#export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
+
+echo "HOSTNAME `hostname`"
+
+if [ -z "$SINGLE_USE" ]; then
+    $WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-pre-cleanup
+    $WORKSPACE/neutron-thirdparty-ci/slave/ci-slave-reset-a10
+else
+    # Start spinning up an appliance now; we'll check it in the pre-test-hook
+    $WORKSPACE/neutron-thirdparty-ci/slave/pre-setup
+    $WORKSPACE/neutron-thirdparty-ci/slave/a10-run
+fi
+
+cat devstack-gate/features.yaml \
+  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+  | sed -e 's/juno\: \[default.*$/juno: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
+  > /tmp/features.yml
+export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
+
+function pre_test_hook {
+  $WORKSPACE/neutron-thirdparty-ci/slave/pre-test-hook
+  return $?
+}
+export -f pre_test_hook
+
+function post_test_hook {
+  $WORKSPACE/neutron-thirdparty-ci/slave/post-test-hook
+  return $?
+}
+export -f post_test_hook
+
+# function gate_hook {
+#   exit 1
+# }
+# export -f gate_hook
+
+export RE_EXEC=true
+
+cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
+set +e
+bash ./safe-devstack-vm-gate-wrap.sh
+r=$?
+if [ $r -ne 0 ]; then
+  post_test_hook
+fi
+exit $r

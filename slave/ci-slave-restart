@@ -1,0 +1,9 @@
+#!/bin/sh
+
+python $WORKSPACE/neutron-thirdparty-ci/ax/ax_reboot.py
+sleep 10
+
+sudo reboot
+sleep 60  # we shouldn't ever make it here
+
+exit 0

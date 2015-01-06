@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+whoami
+
+python $WORKSPACE/neutron-thirdparty-ci/ax/ax_reset.py

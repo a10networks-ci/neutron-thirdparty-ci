@@ -1,0 +1,7 @@
+#!/bin/bash -xe
+
+if [ -n "$SINGLE_USE" ]; then
+    $WORKSPACE/neutron-thirdparty-ci/slave/a10-terminate
+fi
+
+exit 0

@@ -1,0 +1,14 @@
+#!/bin/bash -x
+
+# If any apache files changed, copy them and notify apache
+#todo
+
+# If the zuul layout changes, copy it over safely and reload zuul
+#todo
+
+# Install cron.d files
+
+sudo cp etc/cron.d/* /etc/cron.d
+sudo service cron reload
+
+exit 0
