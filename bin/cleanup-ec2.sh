@@ -24,7 +24,7 @@ fi
 is_slave() {
     ip=$1
     ssh -o StrictHostKeyChecking=no ubuntu@$ip ps auxww > $t.2
-    if [ -z "$t.2" ]; then
+    if [ -z "head $t.2" ]; then
         # Empty means we got no results; something went wrong
         return 0
     fi
@@ -36,7 +36,7 @@ is_slave() {
     fi
 }
 
-t=/tmp/.cleanup-ec2.$$
+t=/tmp/cleanup-ec2.$$
 
 instances=$(aws ec2 describe-instances --filter Name=instance-type,Values=m3.medium | egrep InstanceId | perl -ne '/"InstanceId": "(.*?)",/ && print "$1\n";')
 
@@ -58,11 +58,11 @@ for i in $instances; do
     # Check if the instance is a Jenkins slave
     if ! is_slave $ip; then
         # Not a slave; give it a few seconds to become one
-        sleep 10
+        sleep 60
 
         # Last chance; if still not a slave, toast it
         if ! is_slave $ip; then
-            echo aws ec2 terminate-instances --instance-ids $i
+            aws ec2 terminate-instances --instance-ids $i
         fi
     fi
 done
