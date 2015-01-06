@@ -89,7 +89,7 @@ class ZuulWatcher
     # watch_file('/var/log/zuul/zuul.log') do |line|
     watch_file('/var/log/zuul/debug.log') do |line|
 
-      puts "LINE #{line}"
+      #puts "LINE #{line}"
 
       # trigger event: <TriggerEvent patchset-created openstack/neutron-specs master 128613,7
       if line =~ /trigger event: \<.*? .*? (.*?) (.*?) (.*),(.*)\>/
@@ -100,7 +100,7 @@ class ZuulWatcher
         @changes[changenum] = { project: project, branch: branch }
 
       elsif line =~ /DEBUG .*? Adding build \<Build (.*?) of .*Change .*? ([0-9]+)\,([0-9]+)/
-        #puts "JOB INFO line: #{line}"
+        puts "JOB INFO line: #{line}"
         @jobs[$1] = { changenum: $2, patchset: $3 }
 
       elsif line =~ /INFO .*? Cancel build \<Build (.*?) /
@@ -112,12 +112,12 @@ class ZuulWatcher
         result = $2
 
         if result == 'SUCCESS'
-          #puts "FOUND A SUCCESSFUL JOB!"
+          puts "FOUND A SUCCESSFUL JOB!"
           @consecutive_failures = 0
           @changes.delete(@jobs[job_id][:changenum])
         elsif result == 'FAILURE'
-          #puts "FOUND A FAILURE: ++#{job_id}++ #{@jobs[job_id]}"
-          #puts "  LINE: #{line}"
+          puts "FOUND A FAILURE: ++#{job_id}++ #{@jobs[job_id]}"
+          puts "  LINE: #{line}"
           @consecutive_failures += 1
           j = @jobs[job_id]
 
