@@ -23,16 +23,18 @@ pipelines:
         - event: comment-added
           comment: recheck bug
 
-    success:
-      gerrit:
-        verified: 0
-#        verified: 1
-    failure:
-      gerrit:
-        verified: 0
-#        verified: -1
+#    success:
+#      gerrit:
+#        verified: 0
+##        verified: 1
+#    failure:
+#      gerrit:
+#        verified: 0
+##        verified: -1
 
 jobs:
+  - name: a10-neutron-lbaas
+    branch: (master|juno|lbaasv2)
   - name: a10-neutron-tempest
     branch: (master|juno|lbaasv2)
 #    voting: false
@@ -43,8 +45,8 @@ jobs:
 projects:
   - name: openstack/neutron
     check:
-      - a10-neutron-tempest
+      - a10-neutron-lbaas
 
   - name: openstack/neutron-lbaas
     check:
-      - a10-neutron-tempest
+      - a10-neutron-lbaas
