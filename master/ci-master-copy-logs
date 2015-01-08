@@ -29,6 +29,10 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
         job="a10-neutron-lbaas"
     fi
+    # When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
+    if [ -n "$build_number" -a $build_number -le 85 ]; then
+        build_number=$((build_number-1))
+    fi
     echo $job
     job_and_num="${job}/${build_number}"
     echo $job_with_num
