@@ -1,54 +1,47 @@
 #!/bin/bash -xe
 
 ARCHIVE_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER/archive"
+cd $ARCHIVE_DIR
+if [ ! -d logs ]; then
+    return 1
+fi
 
-copy_the_logs() {
-    a="$1"
-    cd $a
-    if [ ! -d logs ]; then
-        return 1
-    fi
+job=$(cat ../injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
+build_number=$(cat ../injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
+gerrit_change=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
+gerrit_patchset=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
+echo $job
+echo $build_number
+gerrit="$gerrit_change/$gerrit_patchset"
+echo $gerrit
 
-    job=$(cat ../injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
-    build_number=$(cat ../injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
-    gerrit_change=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
-    gerrit_patchset=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
-    echo $job
-    echo $build_number
-    gerrit="$gerrit_change/$gerrit_patchset"
-    echo $gerrit
+if [ "$job" = "a10-neutron-lbaas" ]; then
+    job="a10-neutron-lbaas-wrapper"
+elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
+    job="a10-neutron-lbaas"
+fi
+# When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
+if [ -n "$build_number" -a $build_number -le 85 ]; then
+    build_number=$((build_number-1))
+fi
+echo $job
+job_and_num="${job}/${build_number}"
+echo $job_with_num
+job_with_gerrit="${job}/${gerrit}/${build_number}"
+echo $job_with_gerrit
 
-    if [ "$job" = "a10-neutron-lbaas" ]; then
-        job="a10-neutron-lbaas-wrapper"
-    elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
-        job="a10-neutron-lbaas"
-    fi
-    # When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
-    if [ -n "$build_number" -a $build_number -le 85 ]; then
-        build_number=$((build_number-1))
-    fi
-    echo $job
-    job_and_num="${job}/${build_number}"
-    echo $job_with_num
-    job_with_gerrit="${job}/${gerrit}/${build_number}"
-    echo $job_with_gerrit
+p="logs/$job_with_gerrit"
+d="/ci/$p"
+if [ -d "$d" ]; then
+    mv "$d" "$d.old"
+fi
+mkdir -p "$d"
 
-    p="logs/$job_with_gerrit"
-    d="/ci/$p"
-    if [ -d "$d" ]; then
-        mv "$d" "$d.old"
-    fi
-    mkdir -p "$d"
+$WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ../log > "$d/console_log.txt"
+gzip "$d/console_log.txt"
+tar cf - logs | tar xf - -C "$d"
+gzip -q -r "$d/logs"
+chmod -R a+r "$d"
 
-    $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ../log > "$d/console_log.txt"
-    gzip "$d/console_log.txt"
-    tar cf - logs | tar xf - -C "$d"
-    gzip -q -r "$d/logs"
-    chmod -R a+r "$d"
-
-    # Some CI info; who to call if it's broke.
-    cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"
-}
-
-copy_the_logs "$ARCHIVE_DIR"
-exit 0
+# Some CI info; who to call if it's broke.
+cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"

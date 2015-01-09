@@ -1,0 +1,4 @@
+#!/bin/bash -xe
+
+# Start spinning up an appliance now; we'll check it in the pre-test-hook
+$WORKSPACE/neutron-thirdparty-ci/slave/a10-run
