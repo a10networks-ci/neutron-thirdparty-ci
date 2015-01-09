@@ -1,24 +1,12 @@
 #!/bin/bash -xe
 
-if [ -z "$LOCKED" ]; then
-    # Only one of us gets to run at a time
-    (
-        flock 9 || exit 1
-        export LOCKED=1
-        exec $0 $*
-    ) 9>/tmp/copy-logs.lock
-fi
+ARCHIVE_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER/archive"
 
-if [ -f $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ]; then
-    strip=$WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb
-else
-    strip=/home/builder/neutron-thirdparty-ci/neutron-thirdparty-ci/bin/strip_jenkins_log.rb
-fi
-
-find /var/lib/jenkins/jobs -type d -name archive | while read a; do
+copy_the_logs() {
+    a="$1"
     cd $a
     if [ ! -d logs ]; then
-        continue
+        return 1
     fi
 
     job=$(cat ../injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
@@ -48,30 +36,19 @@ find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     p="logs/$job_with_gerrit"
     d="/ci/$p"
     if [ -d "$d" ]; then
-        continue
+        mv "$d" "$d.old"
     fi
     mkdir -p "$d"
-    #curl --insecure https://jenkins.a10cloud.com/job/${job_and_num}/consoleText > "$d/console_log.txt"
-    #cp ../log "$d/console_log.txt"
+
     $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ../log > "$d/console_log.txt"
     gzip "$d/console_log.txt"
     tar cf - logs | tar xf - -C "$d"
     gzip -q -r "$d/logs"
     chmod -R a+r "$d"
 
-    # Some browsers don't download gz seamlessly, and some folks don't like that.
-    cd "$d"
-    #gunzip -r .
-
     # Some CI info; who to call if it's broke.
     cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"
+}
 
-    # # In prep to switch to URLs that match gerrit, ish, start making them as links now.
-    # x="logs/$job_with_gerrit"
-    # b=$(dirname "/ci/$x")
-    # mkdir -p $b
-    # cd $b
-    # ln -s "$d" .
-done
-
+copy_the_logs "$ARCHIVE_DIR"
 exit 0
