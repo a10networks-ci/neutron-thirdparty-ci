@@ -9,6 +9,12 @@ if [ -z "$LOCKED" ]; then
     ) 9>/tmp/copy-logs.lock
 fi
 
+if [ -f $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ]; then
+    strip=$WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb
+else
+    strip=/home/builder/neutron-thirdparty-ci/neutron-thirdparty-ci/bin/strip_jenkins_log.rb
+fi
+
 find /var/lib/jenkins/jobs -type d -name archive | while read a; do
     cd $a
     if [ ! -d logs ]; then

@@ -1,0 +1,1 @@
+* * * * * root /home/builder/neutron-thirdparty-ci/master/ci-master-copy-logs > /tmp/copy-logs.out 2> /tmp/copy-logs.err
