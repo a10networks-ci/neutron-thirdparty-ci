@@ -9,6 +9,9 @@ cd $ARCHIVE_DIR
 if [ ! -d logs ]; then
     return 1
 fi
+if [ -z "$WORKSPACE" ]; then
+    WORKSPACE=/home/builder
+fi
 
 job=$(cat ../injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
 build_number=$(cat ../injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
