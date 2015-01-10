@@ -1,0 +1,5 @@
+#!/bin/bash -x
+
+find /var/lib/jenkins/jobs -type d -name archive | while read a; do
+    master/copy-logs "$a"
+done

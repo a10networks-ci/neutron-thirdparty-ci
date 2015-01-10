@@ -1,6 +1,10 @@
 #!/bin/bash -xe
 
-ARCHIVE_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER/archive"
+if [ -n "$1" ]; then
+    ARCHIVE_DIR="$1"
+else
+    ARCHIVE_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER/archive"
+fi
 cd $ARCHIVE_DIR
 if [ ! -d logs ]; then
     return 1
