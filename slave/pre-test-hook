@@ -27,6 +27,8 @@ sudo pip install -U a10-neutron-lbaas
 
 # Make sure we have a configuration
 
+AXAPI_VERSION=${AXAPI_VERSION:-2.1}
+
 echo "Writing private config.py"
 set +x
 cat - > $HOME/config.py <<EOF
@@ -36,7 +38,7 @@ devices = {
         "username": "admin",
         "password": "`cat ~/.a10-instance-id`",
         "port": 8443,
-        "api_version": "2.1",
+        "api_version": "$AXAPI_VERSION",
         "v_method": "adp",
     },
 }
