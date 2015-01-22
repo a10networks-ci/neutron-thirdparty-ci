@@ -22,8 +22,16 @@ cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.con
 
 ## A10 Software and config
 
-sudo pip install -U acos-client
-sudo pip install -U a10-neutron-lbaas
+if [ -n "$ACOS_CLIENT_GIT" ]; then
+    sudo pip install -e "git+${ACOS_CLIENT_GIT}#egg=a10_neutron_lbaas"
+else
+    sudo pip install -U acos-client
+fi
+if [ -n "$A10_NEUTRON_LBAAS_GIT" ]; then
+    sudo pip install -e "git+${A10_NEUTRON_LBAAS_GIT}#egg=a10_neutron_lbaas"
+else
+    sudo pip install -U a10-neutron-lbaas
+fi
 
 # Make sure we have a configuration
 
