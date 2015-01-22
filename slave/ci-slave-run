@@ -63,11 +63,11 @@ fi
 export RE_EXEC=true
 
 if ! function_exists "pre_setup_hook"; then
-  function post_test_hook {
+  function pre_setup_hook {
     $WORKSPACE/neutron-thirdparty-ci/slave/pre-setup-hook
     return $?
   }
-  export -f post_test_hook
+  export -f pre_setup_hook
 fi
 pre_setup_hook
 
