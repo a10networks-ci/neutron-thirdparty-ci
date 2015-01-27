@@ -1,0 +1,3 @@
+#!/bin/sh -xe
+
+flake8 --exclude etc/zuul --max-line-length=100 --ignore=H102 .

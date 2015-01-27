@@ -35,17 +35,25 @@ cat devstack-gate/features.yaml \
   > /tmp/features.yml
 export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
-function pre_test_hook {
-  $WORKSPACE/neutron-thirdparty-ci/slave/pre-test-hook
-  return $?
+function function_exists {
+    type $1 2>/dev/null | grep -q 'is a function'
 }
-export -f pre_test_hook
 
-function post_test_hook {
-  $WORKSPACE/neutron-thirdparty-ci/slave/post-test-hook
-  return $?
-}
-export -f post_test_hook
+if ! function_exists "pre_test_hook"; then
+  function pre_test_hook {
+    $WORKSPACE/neutron-thirdparty-ci/slave/pre-test-hook
+    return $?
+  }
+  export -f pre_test_hook
+fi
+
+if ! function_exists "post_test_hook"; then
+  function post_test_hook {
+    $WORKSPACE/neutron-thirdparty-ci/slave/post-test-hook
+    return $?
+  }
+  export -f post_test_hook
+fi
 
 # function gate_hook {
 #   exit 1
@@ -54,7 +62,14 @@ export -f post_test_hook
 
 export RE_EXEC=true
 
-$WORKSPACE/neutron-thirdparty-ci/slave/pre-setup-hook
+if ! function_exists "pre_setup_hook"; then
+  function pre_setup_hook {
+    $WORKSPACE/neutron-thirdparty-ci/slave/pre-setup-hook
+    return $?
+  }
+  export -f pre_setup_hook
+fi
+pre_setup_hook
 
 cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 set +e

@@ -22,10 +22,20 @@ cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.con
 
 ## A10 Software and config
 
-sudo pip install -U acos-client
-sudo pip install -U a10-neutron-lbaas
+if [ -n "$ACOS_CLIENT_GIT" ]; then
+    sudo pip install -e "git+${ACOS_CLIENT_GIT}#egg=acos_client"
+else
+    sudo pip install -U acos-client
+fi
+if [ -n "$A10_NEUTRON_LBAAS_GIT" ]; then
+    sudo pip install -e "git+${A10_NEUTRON_LBAAS_GIT}#egg=a10_neutron_lbaas"
+else
+    sudo pip install -U a10-neutron-lbaas
+fi
 
 # Make sure we have a configuration
+
+AXAPI_VERSION=${AXAPI_VERSION:-2.1}
 
 echo "Writing private config.py"
 set +x
@@ -36,11 +46,12 @@ devices = {
         "username": "admin",
         "password": "`cat ~/.a10-instance-id`",
         "port": 8443,
-        "api_version": "2.1",
+        "api_version": "$AXAPI_VERSION",
         "v_method": "adp",
     },
 }
 EOF
+python $WORKSPACE/neutron-thirdparty-ci/ax/ax_wait.py
 set -x
 
 d=/etc/neutron/services/loadbalancer/a10networks
