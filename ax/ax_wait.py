@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 
+import acos_client
 import os
 import sys
 import time
-
-import acos_client
 
 sys.path.append(os.environ['HOME'])
 
@@ -12,10 +11,10 @@ import config
 
 d = config.devices['ax-lsi']
 
-TIME_TO_WAIT=600
-SLEEP_INTERVAL=0.1
+TIME_TO_WAIT = 600
+SLEEP_INTERVAL = 0.1
 
-start=time.time()
+start = time.time()
 e = 1
 while time.time() - start < TIME_TO_WAIT:
     try:

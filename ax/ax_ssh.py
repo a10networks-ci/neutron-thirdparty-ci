@@ -2,6 +2,7 @@
 import subprocess
 import tempfile
 
+
 class AxSSH(object):
 
     def __init__(self, host, user, password):
@@ -38,10 +39,10 @@ class AxSSH(object):
                      'y\r\n']
 
         if verbose:
-            print commands
+            print(commands)
         lines = self._ssh(commands)
         if verbose:
-            print lines
+            print(lines)
         trim = []
         for line in lines:
             x = line.strip()
@@ -59,11 +60,11 @@ class AxSSH(object):
             'erase preserve-management preserve-accounts reload\r\n',
             'y\r\n',
             '\r\n',
-            #'web-service server\r\n',
-            #'web-service port 8080\r\n',
-            #'web-service secure-server\r\n',
-            #'web-service secure-port 8443\r\n',
-            #'write mem\r\n',
+            # 'web-service server\r\n',
+            # 'web-service port 8080\r\n',
+            # 'web-service secure-server\r\n',
+            # 'web-service secure-port 8443\r\n',
+            # 'write mem\r\n',
             'end\r\n',
         ]
         self.config_gets(commands)
