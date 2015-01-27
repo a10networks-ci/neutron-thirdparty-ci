@@ -51,7 +51,7 @@ devices = {
     },
 }
 EOF
-python $WORKSPACE/neutron-thirdparty-ci/ax/ax_wait.py
+#python $WORKSPACE/neutron-thirdparty-ci/ax/ax_wait.py
 set -x
 
 d=/etc/neutron/services/loadbalancer/a10networks
