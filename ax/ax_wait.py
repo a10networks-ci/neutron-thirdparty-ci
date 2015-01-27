@@ -12,7 +12,7 @@ import config
 
 d = config.devices['ax-lsi']
 
-TIME_TO_WAIT=6 #00
+TIME_TO_WAIT=600
 SLEEP_INTERVAL=0.1
 
 start=time.time()
