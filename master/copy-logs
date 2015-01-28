@@ -1,22 +1,20 @@
 #!/bin/bash -xe
 
-if [ -n "$1" ]; then
-    ARCHIVE_DIR="$1"
-else
-    ARCHIVE_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER/archive"
-fi
-cd $ARCHIVE_DIR
-if [ ! -d logs ]; then
-    return 1
-fi
 if [ -z "$WORKSPACE" ]; then
     WORKSPACE=/home/builder
 fi
 
-job=$(cat ../injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
-build_number=$(cat ../injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
-gerrit_change=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
-gerrit_patchset=$(cat ../injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
+if [ -n "$1" ]; then
+    JOB_DIR="$1"
+else
+    JOB_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER"
+fi
+cd $JOB_DIR
+
+job=$(cat injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
+build_number=$(cat injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
+gerrit_change=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
+gerrit_patchset=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
 echo $job
 echo $build_number
 gerrit="$gerrit_change/$gerrit_patchset"
@@ -46,9 +44,13 @@ mkdir -p "$d"
 
 $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ../log > "$d/console_log.txt"
 gzip "$d/console_log.txt"
-tar cf - logs | tar xf - -C "$d"
-gzip -q -r "$d/logs"
-chmod -R a+r "$d"
+
+if [ -d archive/logs ]; then
+    cd archive
+    tar cf - logs | tar xf - -C "$d"
+    gzip -q -r "$d/logs"
+    chmod -R a+r "$d"
+fi
 
 # Some CI info; who to call if it's broke.
 cp $WORKSPACE/neutron-thirdparty-ci/README.md "$d"
