@@ -42,7 +42,7 @@ if [ -d "$d" ]; then
 fi
 mkdir -p "$d"
 
-$WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb ../log > "$d/console_log.txt"
+$WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb log > "$d/console_log.txt"
 gzip "$d/console_log.txt"
 
 if [ -d archive/logs ]; then
