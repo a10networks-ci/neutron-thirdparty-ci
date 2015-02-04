@@ -2,7 +2,11 @@
 
 ## Our devstack config
 
-cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+if [ "$ZUUL_BRANCH" = "stable/juno" ]; then
+    cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local-juno.conf
+else
+    cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
+fi
 
 ## Fix devstack for a bug in multi-line handling
 
