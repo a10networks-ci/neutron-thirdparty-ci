@@ -2,7 +2,9 @@
 
 ## Our devstack config
 
-if [ "$ZUUL_BRANCH" = "stable/juno" ]; then
+if [ "$LBAAS_VERSION" = "2" ]; then
+    cp $WORKSPACE/neutron-thirdparty-ci/local_v2.conf /opt/stack/new/devstack/local.conf
+elif [ "$ZUUL_BRANCH" = "stable/juno" ]; then
     cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local-juno.conf
 else
     cp $WORKSPACE/neutron-thirdparty-ci/local.conf /opt/stack/new/devstack/local.conf
