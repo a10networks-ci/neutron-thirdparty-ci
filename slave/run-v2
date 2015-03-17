@@ -12,12 +12,12 @@ if [ "$BRANCH_OVERRIDE" != "default" ] ; then
     export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
 fi
 
-function gate_hook {{
+function gate_hook {
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/gate_hook.sh
-}}
+}
 export -f gate_hook
 
-function post_test_hook {{
+function post_test_hook {
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/post_test_hook.sh
-}}
+}
 export -f post_test_hook
