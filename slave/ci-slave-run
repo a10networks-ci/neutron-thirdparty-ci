@@ -20,9 +20,9 @@ function function_exists {
 }
 
 if [ "$LBAAS_VERSION" = "2" ]; then
-  . run-v2
+  . neutron-thirdparty-ci/slave/run-v2
 else
-  . run-v1
+  . neutron-thirdparty-ci/slave/run-v1
 fi
 
 if ! function_exists "pre_test_hook"; then
