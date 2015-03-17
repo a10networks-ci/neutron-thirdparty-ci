@@ -42,7 +42,7 @@ if ! function_exists "pre_setup_hook"; then
 fi
 
 if ! function_exists "post_cleanup_hook"; then
-  function post_test_hook {
+  function post_cleanup_hook {
     $WORKSPACE/neutron-thirdparty-ci/slave/post-cleanup-hook
     return $?
   }
