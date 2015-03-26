@@ -4,3 +4,11 @@ mkdir -p $HOME/cache/files/
 
 # Start spinning up an appliance now; we'll check it in the pre-test-hook
 $WORKSPACE/neutron-thirdparty-ci/slave/a10-run
+
+# We need jenkins slave scripts for testr processing
+$WORKSPACE/neutron-thirdparty-ci/slave/update-pconfig
+cd project-config/jenkins/scripts
+z=$(/bin/pwd)
+sudo mkdir -p /usr/local/jenkins
+cd /usr/local/jenkins
+sudo ln -s "$z" slave_scripts

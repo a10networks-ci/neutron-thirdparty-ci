@@ -1,0 +1,21 @@
+#!/bin/bash -xe
+
+if [[ ! -e project-config ]]; then
+    git clone git://git.openstack.org/openstack-infra/project-config
+else
+    cd project-config
+    git remote set-url origin git://git.openstack.org/openstack-infra/project-config
+    git remote update
+    git reset --hard
+    if ! git clean -x -f ; then
+        sleep 1
+        git clean -x -f
+    fi
+    git checkout master
+    git reset --hard remotes/origin/master
+    if ! git clean -x -f ; then
+        sleep 1
+        git clean -x -f
+    fi
+    cd ..
+fi
