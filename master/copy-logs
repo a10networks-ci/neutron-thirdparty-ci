@@ -25,6 +25,12 @@ if [ "$job" = "a10-neutron-lbaas" ]; then
 elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
     job="a10-neutron-lbaas"
 fi
+if [ "$job" = "a10-neutron-lbaasv2" ]; then
+    job="a10-neutron-lbaasv2-wrapper"
+elif [ "$job" = "a10-neutron-lbaasv2-ec2" ]; then
+    job="a10-neutron-lbaasv2"
+fi
+
 # When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
 if [ -n "$build_number" ]; then
     if [ $build_number -le 85 ]; then
