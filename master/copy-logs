@@ -30,7 +30,9 @@ if [ "$job" = "a10-neutron-lbaasv2" ]; then
 elif [ "$job" = "a10-neutron-lbaasv2-ec2" ]; then
     job="a10-neutron-lbaasv2"
 fi
+set +e
 v2=$(echo $job | grep -c v2)
+set -e
 
 # When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
 if [ -n "$build_number" ]; then
