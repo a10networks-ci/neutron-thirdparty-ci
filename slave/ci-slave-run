@@ -12,32 +12,18 @@ if [ -z $ZUUL_BRANCH ]; then
     export ZUUL_BRANCH=master
 fi
 export ZUUL_URL=http://zuul.a10cloud.com/p
-export PYTHONUNBUFFERED=true
-export DEVSTACK_GATE_TIMEOUT=180
-export DEVSTACK_GATE_TEMPEST=1
-export DEVSTACK_GATE_NEUTRON=1
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])((network)|(neutron))'
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*lbaas_agent)'
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|test_bulk_create_delete_subnet|test_create_delete_subnet_with|overlap|test_create_delete_subnet_all_attributes|test_update_subnet_gw_dns_host_routes_dhcp|test_create_list_subnet_with_no_gw64_one_network))'
-export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|fwaas|vpnaas))'
-# temporarily disable scenario (expects same neutron subnet)
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)(?!.*lbaas_agent)'
-
-#export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
 
 echo "HOSTNAME `hostname`"
-
-# Tweak the features a bit; swift and cinder waste a bunch of RAM/disk,
-# and we do not test them at all.
-cat devstack-gate/features.yaml \
-  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-  | sed -e 's/juno\: \[default.*$/juno: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-  > /tmp/features.yml
-export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
 
 function function_exists {
     type $1 2>/dev/null | grep -q 'is a function'
 }
+
+if [ "$LBAAS_VERSION" = "2" ]; then
+  . neutron-thirdparty-ci/slave/run-v2
+else
+  . neutron-thirdparty-ci/slave/run-v1
+fi
 
 if ! function_exists "pre_test_hook"; then
   function pre_test_hook {
@@ -47,21 +33,6 @@ if ! function_exists "pre_test_hook"; then
   export -f pre_test_hook
 fi
 
-if ! function_exists "post_test_hook"; then
-  function post_test_hook {
-    $WORKSPACE/neutron-thirdparty-ci/slave/post-test-hook
-    return $?
-  }
-  export -f post_test_hook
-fi
-
-# function gate_hook {
-#   exit 1
-# }
-# export -f gate_hook
-
-export RE_EXEC=true
-
 if ! function_exists "pre_setup_hook"; then
   function pre_setup_hook {
     $WORKSPACE/neutron-thirdparty-ci/slave/pre-setup-hook
@@ -69,13 +40,20 @@ if ! function_exists "pre_setup_hook"; then
   }
   export -f pre_setup_hook
 fi
-pre_setup_hook
 
+if ! function_exists "post_cleanup_hook"; then
+  function post_cleanup_hook {
+    $WORKSPACE/neutron-thirdparty-ci/slave/post-cleanup-hook
+    return $?
+  }
+  export -f post_cleanup_hook
+fi
+
+export RE_EXEC=true
+pre_setup_hook
 cp devstack-gate/devstack-vm-gate-wrap.sh ./safe-devstack-vm-gate-wrap.sh
 set +e
 bash ./safe-devstack-vm-gate-wrap.sh
 r=$?
-if [ $r -ne 0 ]; then
-  post_test_hook
-fi
+post_cleanup_hook
 exit $r
