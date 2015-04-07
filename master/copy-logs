@@ -7,7 +7,16 @@ fi
 if [ -n "$1" ]; then
     JOB_DIR="$1"
 else
-    JOB_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$BUILD_NUMBER"
+    JOB_DIR="/var/lib/jenkins/jobs/${JOB_NAME}/builds/$BUILD_NUMBER"
+    cd $JOB_DIR
+
+    # If this has a -ec2 child build, figure out where it is
+    child=$($WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb log | \
+        perl -ne '/\-ec2 \#([0-9]+) completed/ && print "$1\n";')
+    if [ -n "$child" ]; then
+        PARENT_LOG="$JOB_DIR/log"
+        JOB_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$child"
+    fi
 fi
 cd $JOB_DIR
 
@@ -30,16 +39,7 @@ if [ "$job" = "a10-neutron-lbaasv2" ]; then
 elif [ "$job" = "a10-neutron-lbaasv2-ec2" ]; then
     job="a10-neutron-lbaasv2"
 fi
-set +e
-v2=$(echo $job | grep -c v2)
-set -e
 
-# When the lbaas and lbaas-ec2 jobs were out of sync, logs did not line up
-if [ -n "$build_number" ]; then
-    if [ $v2 -eq 0 -a $build_number -le 85 ]; then
-        build_number=$((build_number-1))
-    fi
-fi
 echo $job
 job_and_num="${job}/${build_number}"
 echo $job_with_num
@@ -55,6 +55,11 @@ mkdir -p "$d"
 
 $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb log > "$d/console_log.txt"
 gzip "$d/console_log.txt"
+
+if [ -n "$PARENT_LOG" ]; then
+    $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb "$PARENT_LOG" > "$d/parent_log.txt"
+    gzip "$d/parent_log.txt"
+fi
 
 if [ -d archive/logs ]; then
     cd archive
