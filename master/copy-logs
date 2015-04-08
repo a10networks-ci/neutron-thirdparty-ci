@@ -14,6 +14,7 @@ else
     child=$($WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb log | \
         perl -ne '/\-ec2 \#([0-9]+) completed/ && print "$1\n";')
     if [ -n "$child" ]; then
+        PARENT_JOB_DIR="$JOB_DIR"
         PARENT_LOG="$JOB_DIR/log"
         JOB_DIR="/var/lib/jenkins/jobs/${JOB_NAME}-ec2/builds/$child"
     fi
@@ -29,16 +30,16 @@ echo $build_number
 gerrit="$gerrit_change/$gerrit_patchset"
 echo $gerrit
 
-if [ "$job" = "a10-neutron-lbaas" ]; then
-    job="a10-neutron-lbaas-wrapper"
-elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
-    job="a10-neutron-lbaas"
-fi
-if [ "$job" = "a10-neutron-lbaasv2" ]; then
-    job="a10-neutron-lbaasv2-wrapper"
-elif [ "$job" = "a10-neutron-lbaasv2-ec2" ]; then
-    job="a10-neutron-lbaasv2"
-fi
+# if [ "$job" = "a10-neutron-lbaas" ]; then
+#     job="a10-neutron-lbaas-wrapper"
+# elif [ "$job" = "a10-neutron-lbaas-ec2" ]; then
+#     job="a10-neutron-lbaas"
+# fi
+# if [ "$job" = "a10-neutron-lbaasv2" ]; then
+#     job="a10-neutron-lbaasv2-wrapper"
+# elif [ "$job" = "a10-neutron-lbaasv2-ec2" ]; then
+#     job="a10-neutron-lbaasv2"
+# fi
 
 echo $job
 job_and_num="${job}/${build_number}"
@@ -56,9 +57,23 @@ mkdir -p "$d"
 $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb log > "$d/console_log.txt"
 gzip "$d/console_log.txt"
 
-if [ -n "$PARENT_LOG" ]; then
-    $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb "$PARENT_LOG" > "$d/parent_log.txt"
+if [ -n "$PARENT_JOB_DIR" ]; then
+    $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb "$PARENT_JOB_DIR/log" > "$d/parent_log.txt"
     gzip "$d/parent_log.txt"
+
+    pushd $PARENT_JOB_DIR
+    p_job=$(cat injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
+    p_build_number=$(cat injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
+    p_gerrit_change=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
+    p_gerrit_patchset=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
+    p_gerrit="$p_gerrit_change/$p_gerrit_patchset"
+    p_job_and_num="${p_job}/${p_build_number}"
+    p_job_with_gerrit="${p_job}/${p_gerrit}/${p_build_number}"
+    p_d="/ci/logs/$job_with_gerrit"
+
+    mkdir -p `basename $p_d`
+    ln -s $d $p_d
+    popd
 fi
 
 if [ -d archive/logs ]; then
