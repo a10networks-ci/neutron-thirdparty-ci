@@ -7,9 +7,20 @@ export DEVSTACK_GATE_NEUTRON=1
 #export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])((network)|(neutron))'
 #export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*lbaas_agent)'
 #export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|test_bulk_create_delete_subnet|test_create_delete_subnet_with|overlap|test_create_delete_subnet_all_attributes|test_update_subnet_gw_dns_host_routes_dhcp|test_create_list_subnet_with_no_gw64_one_network))'
-export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|fwaas|vpnaas))'
+#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|fwaas|vpnaas))'
 # temporarily disable scenario (expects same neutron subnet)
 #export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)(?!.*lbaas_agent)'
+
+DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])'
+#DEVSTACK_GATE_TEMPEST_REGEX+='(tempest.api.network|tempest.cli.simple_read_only.test_neutron)'
+DEVSTACK_GATE_TEMPEST_REGEX+='('
+DEVSTACK_GATE_TEMPEST_REGEX+='tempest.api.network.test_load_balancer'
+DEVSTACK_GATE_TEMPEST_REGEX+='|'
+DEVSTACK_GATE_TEMPEST_REGEX+='tempest.api.network.admin.test_load_balancer_admin_actions'
+DEVSTACK_GATE_TEMPEST_REGEX+=')'
+#DEVSTACK_GATE_TEMPEST_REGEX+='(?!.*(lbaas_agent|fwaas|vpnaas))'
+export DEVSTACK_GATE_TEMPEST_REGEX
+
 
 #export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
 
