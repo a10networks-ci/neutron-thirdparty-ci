@@ -134,6 +134,13 @@ class AxSSH(object):
         ]
         self.config_gets(commands)
 
+    def partition_show_run(self, partition):
+        commands = [
+            'active-partition %s\r\n' % partition,
+            'show run\r\n'
+        ]
+        return self.config_gets(commands)
+
     def write_mem(self):
         commands = [
             'config\r\n',
