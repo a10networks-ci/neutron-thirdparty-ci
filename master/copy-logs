@@ -64,6 +64,7 @@ if [ -n "$PARENT_JOB_DIR" ]; then
     p_job=$(echo "$PARENT_JOB_DIR" | perl -ne '/jobs\/(.*?)\/builds/ && print "$1\n";')
     p_build_number=$(echo "$PARENT_JOB_DIR" | perl -ne '/builds\/([0-9]+)$/ && print "$1\n";')
     p_job_with_gerrit="${p_job}/${gerrit}/${p_build_number}"
+    p_d="/ci/logs/$p_job_with_gerrit"
 
     mkdir -p `basename $p_d`
     ln -s $d $p_d
