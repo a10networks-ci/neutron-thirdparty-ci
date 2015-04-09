@@ -61,19 +61,12 @@ if [ -n "$PARENT_JOB_DIR" ]; then
     $WORKSPACE/neutron-thirdparty-ci/bin/strip_jenkins_log.rb "$PARENT_JOB_DIR/log" > "$d/parent_log.txt"
     gzip "$d/parent_log.txt"
 
-    pushd $PARENT_JOB_DIR
-    p_job=$(cat injectedEnvVars.txt | perl -ne '/^JOB_NAME=(.*)$/ && print "$1";')
-    p_build_number=$(cat injectedEnvVars.txt | perl -ne '/^BUILD_NUMBER=(.*)$/ && print "$1";')
-    p_gerrit_change=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_CHANGE=(.*)$/ && print "$1";')
-    p_gerrit_patchset=$(cat injectedEnvVars.txt | perl -ne '/^ZUUL_PATCHSET=(.*)$/ && print "$1";')
-    p_gerrit="$p_gerrit_change/$p_gerrit_patchset"
-    p_job_and_num="${p_job}/${p_build_number}"
-    p_job_with_gerrit="${p_job}/${p_gerrit}/${p_build_number}"
-    p_d="/ci/logs/$job_with_gerrit"
+    p_job=$(echo "$PARENT_JOB_DIR" | perl -ne '/jobs\/(.*?)\/builds/ && print "$1\n";')
+    p_build_number=$(echo "$PARENT_JOB_DIR" | perl -ne '/builds\/([0-9]+)$/ && print "$1\n";')
+    p_job_with_gerrit="${p_job}/${gerrit}/${p_build_number}"
 
     mkdir -p `basename $p_d`
     ln -s $d $p_d
-    popd
 fi
 
 if [ -d archive/logs ]; then
