@@ -66,7 +66,7 @@ if [ -n "$PARENT_JOB_DIR" ]; then
     p_job_with_gerrit="${p_job}/${gerrit}/${p_build_number}"
     p_d="/ci/logs/$p_job_with_gerrit"
 
-    mkdir -p `basename $p_d`
+    mkdir -p `dirname $p_d`
     ln -s $d $p_d
 fi
 
