@@ -7,10 +7,10 @@ export DEVSTACK_GATE_TEMPEST_NOTESTS=1
 export DEVSTACK_GATE_EXERCISES=0
 export DEVSTACK_GATE_NEUTRON=1
 export DEVSTACK_GATE_INSTALL_TESTONLY=1
-export BRANCH_OVERRIDE={branch-override}
-if [ "$BRANCH_OVERRIDE" != "default" ] ; then
-    export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
-fi
+# export BRANCH_OVERRIDE={branch-override}
+# if [ "$BRANCH_OVERRIDE" != "default" ] ; then
+#     export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
+# fi
 
 function gate_hook {
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/gate_hook.sh
