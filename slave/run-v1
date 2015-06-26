@@ -1,33 +1,25 @@
 #!/bin/bash -xe
 
+#!/bin/bash -xe
+
 export PYTHONUNBUFFERED=true
-export DEVSTACK_GATE_TIMEOUT=180
+export DEVSTACK_GATE_TIMEOUT=120
 export DEVSTACK_GATE_TEMPEST=1
+export DEVSTACK_GATE_TEMPEST_NOTESTS=1
+export DEVSTACK_GATE_EXERCISES=0
 export DEVSTACK_GATE_NEUTRON=1
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])((network)|(neutron))'
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*lbaas_agent)'
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|test_bulk_create_delete_subnet|test_create_delete_subnet_with|overlap|test_create_delete_subnet_all_attributes|test_update_subnet_gw_dns_host_routes_dhcp|test_create_list_subnet_with_no_gw64_one_network))'
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(tempest.api.network|tempest.cli.simple_read_only.test_neutron)(?!.*(lbaas_agent|fwaas|vpnaas))'
-# temporarily disable scenario (expects same neutron subnet)
-#export DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])(alancer|SimpleReadOnlyNeutron|tempest.api.network)(?!.*lbaas_agent)'
+export DEVSTACK_GATE_INSTALL_TESTONLY=1
+# export BRANCH_OVERRIDE={branch-override}
+# if [ "$BRANCH_OVERRIDE" != "default" ] ; then
+#     export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
+# fi
 
-DEVSTACK_GATE_TEMPEST_REGEX='(?!.*\[.*\bslow\b.*\])'
-#DEVSTACK_GATE_TEMPEST_REGEX+='(tempest.api.network|tempest.cli.simple_read_only.test_neutron)'
-DEVSTACK_GATE_TEMPEST_REGEX+='('
-DEVSTACK_GATE_TEMPEST_REGEX+='tempest.api.network.test_load_balancer'
-DEVSTACK_GATE_TEMPEST_REGEX+='|'
-DEVSTACK_GATE_TEMPEST_REGEX+='tempest.api.network.admin.test_load_balancer_admin_actions'
-DEVSTACK_GATE_TEMPEST_REGEX+=')'
-#DEVSTACK_GATE_TEMPEST_REGEX+='(?!.*(lbaas_agent|fwaas|vpnaas))'
-export DEVSTACK_GATE_TEMPEST_REGEX
+function gate_hook {
+    /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/gate_hook.sh lbaasv1
+}
+export -f gate_hook
 
-
-#export DEVSTACK_PROJECT_FROM_GIT=python-keystoneclient,python-openstackclient
-
-# Tweak the features a bit; swift and cinder waste a bunch of RAM/disk,
-# and we do not test them at all.
-cat devstack-gate/features.yaml \
-  | sed -e 's/master\: \[default.*$/master: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-  | sed -e 's/juno\: \[default.*$/juno: \[default, ceilometer, glance, horizon, nova, keystone\]/' \
-  > /tmp/features.yml
-export DEVSTACK_GATE_FEATURE_MATRIX=/tmp/features.yml
+function post_test_hook {
+    /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/post_test_hook.sh lbaasv1
+}
+export -f post_test_hook
