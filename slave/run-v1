@@ -20,6 +20,15 @@ function gate_hook {
 export -f gate_hook
 
 function post_test_hook {
+    set +e
+    echo "LBAAS TEMPEST CONF"
+    cat /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/tempest/etc/tempest.conf
+    echo "TEMPEST CONF"
+    cat /opt/stack/new/tempest/etc/tempest.conf
+    echo "GREP"
+    grep api_exten /opt/stack/new/tempest/etc/tempest.conf
+    echo "HOOK TIME"
+    set -e
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/post_test_hook.sh lbaasv1
 }
 export -f post_test_hook
