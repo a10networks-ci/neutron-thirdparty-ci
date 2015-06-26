@@ -15,4 +15,6 @@ r="$r|(?:tempest\.api\.network\.admin\.test_lbaas_agent.*)"
 # End list of exclusions.
 r="$r)"
 
+r="$r(neutron_lbaas\.tests\.tempest\.v1\.api).*$"
+
 export DEVSTACK_GATE_TEMPEST_REGEX="$r"
