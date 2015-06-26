@@ -14,6 +14,9 @@ export DEVSTACK_GATE_INSTALL_TESTONLY=1
 #     export OVERRIDE_ZUUL_BRANCH=$BRANCH_OVERRIDE
 # fi
 
+# exclusions
+. v1-testcases
+
 function gate_hook {
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/gate_hook.sh lbaasv1
 }

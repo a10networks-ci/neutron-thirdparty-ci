@@ -1,0 +1,18 @@
+
+# Begin list of exclusions.
+r="^(?!.*"
+
+# exclude the slow tag (part of the default for 'full')
+r="$r(?:.*\[.*\bslow\b.*\])"
+
+# exclude things that just aren't enabled:
+r="$r|(?:tempest\.api\.network\.admin\.test_lbaas_agent.*)"
+
+# Current list of failing tests that need to be triaged, have bugs filed, and
+# fixed as appropriate.
+# (none)
+
+# End list of exclusions.
+r="$r)"
+
+export DEVSTACK_GATE_TEMPEST_REGEX="$r"
