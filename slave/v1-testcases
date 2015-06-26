@@ -6,7 +6,7 @@ r="^(?!.*"
 r="$r(?:.*\[.*\bslow\b.*\])"
 
 # exclude things that just aren't enabled:
-r="$r|(?:tempest\.api\.network\.admin\.test_lbaas_agent.*)"
+r="$r|(?:neutron_lbaas\.tests\.tempest\.v1\.api\.admin\.test_lbaas_agent.*)"
 
 # Current list of failing tests that need to be triaged, have bugs filed, and
 # fixed as appropriate.
