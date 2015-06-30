@@ -34,7 +34,9 @@ function post_test_hook {
     echo "HOOK TIME"
     set -e
     f=/opt/stack/new/tempest/etc/tempest.conf
-    mv $f $f.old
+    sudo mv $f $f.old
+    sudo touch $f
+    sudo chmod a+rwx $f
     cat $f.old | sed -e 's/\#api_extensions = all/api_extensions = lbaas/' > $f
     /opt/stack/new/neutron-lbaas/neutron_lbaas/tests/contrib/post_test_hook.sh lbaasv1
 }
