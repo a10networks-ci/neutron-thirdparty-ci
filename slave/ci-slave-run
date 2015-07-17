@@ -15,7 +15,7 @@ export ZUUL_URL=http://zuul.a10cloud.com/p
 
 echo "HOSTNAME `hostname`"
 
-$WORKSPACE/neutron-thirdparty-ci/slave/make-swap
+sudo $WORKSPACE/neutron-thirdparty-ci/slave/make-swap
 
 function function_exists {
     type $1 2>/dev/null | grep -q 'is a function'
